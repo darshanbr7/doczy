@@ -5,7 +5,9 @@ const userSchema = new Schema({
     password : String,
     phoneNumber : String,
     role:{
-        enum :[ "admin", "doctor", "user" ]
+        type : String,
+        enum :[ "admin", "doctor", "customer" ],
+        required: true 
     },
     isSubscriber : {
         type : Boolean,

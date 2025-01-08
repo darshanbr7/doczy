@@ -1,4 +1,4 @@
-import User from "../models/user.model.js"
+import User from "../models/userModel.js"
 /* importing helper function to make a db call to check phone no and email is already exist or not */
 import checkCollection from "../helpers/checkCollection.js"
 export const userRegisterSchema = {
@@ -138,7 +138,7 @@ export const  userLoginSchema = {
         isEmail : {
             errorMessage : "Enter the proper Email format"
         },
-        optionals : true,
+        optional : true,
         normalizeEmail :  true,
         trim : true,
     },
@@ -151,7 +151,7 @@ export const  userLoginSchema = {
             errorMessage : "Phone Number Should not be empty"
         },
         trim :  true,
-        isLenght : {
+        isLength : {
             options :{
                 min : 10,
                 max:  10
@@ -164,7 +164,7 @@ export const  userLoginSchema = {
             },
             errorMessage : "Phone Number consis only Number"
         },
-        optionals : true
+        optional : true
     },
     password : {
         in : [ "body" ],
