@@ -5,9 +5,6 @@ const generateToken =  async ( user ) => {
     try {
         const tokenData = {
             userId : user._id,
-            name : user.name,
-            email : user.email,
-            phoneNumber : user.phoneNumber,
             role : user.role,
             isVerified : user.isVerified
         }

@@ -175,6 +175,7 @@ export const  userLoginSchema = {
             errorMessage : "Password Should not be empty"
         },
         trim : true,
+        optional : true,
         isStrongPassword : {
             options : {
                 minLength : 8,
@@ -185,5 +186,30 @@ export const  userLoginSchema = {
             }, 
             errorMessage : "Password should contain one UpperCase, one LowerCase, one Number and one Symbol with minimum eight character"
         }
+    },
+    otp : {
+        in : [ "body" ],
+        exists : {
+            errorMessage : "OTP is required"
+        },
+        notEmpty : {
+            errorMessage : "OTP Should not be empty"
+        },
+        trim :  true,
+        isLength : {
+            options :{
+                min : 6,
+                max:  6
+            },
+            errorMessage : "OTP should be 6 degits"
+        },
+        isNumeric : {
+            options : {
+                no_symbols :  true
+            },
+            errorMessage : "OTP consis only Number"
+        },
+        optional : true
+        
     }
 }
