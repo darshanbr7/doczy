@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { isEmail, isMobilePhone, isNumeric } from "validator";
-import { FiEye } from "react-icons/fi";
+import { isEmail, isNumeric } from "validator";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import {ToastContainer, toast } from "react-toastify"
 import InfoPage from "../images/InfoPage.jpg"
 const Login = ( ) => {
     const location = useLocation();
     const [ loginInput, setLoginInput ] = useState("");
-    const [ password, setPassword ] = useState( "")
+    const [ password, setPassword ] = useState("")
     const [ click, setClick ] = useState( false );
     const [ clientErrors, setClientErrors ] = useState( null );
     const errors = {}
@@ -92,11 +92,19 @@ const Login = ( ) => {
                                             placeholder="Password"
                                             className = { `flex p-1 w-80 m-auto mt-2 opacity-80 focus:outline-none   focus : shadow-md  rounded-md text-sm font-semibold focus:bg-slate-100 pr-10 ${ clientErrors?.password ? "border-2 border-b-red-400" : "border"}`}
                                             />
-                                        <FiEye className="absolute  right-2  top-1/2 transform -translate-y-1/2"
-                                                onClick={ (  )=>{
-                                                    setClick(!click )
-                                                }}
-                                        />
+                                        { click ? <>
+                                                    <FiEyeOff className="absolute  right-2  top-1/2 transform -translate-y-1/2"
+                                                        onClick={ (  )=>{
+                                                            setClick(!click )
+                                                        }}
+                                                     />
+                                                 </>: <>
+                                                    <FiEye className="absolute  right-2  top-1/2 transform -translate-y-1/2" 
+                                                    onClick={ (  )=>{
+                                                        setClick(!click )
+                                                    }}
+                                                    />
+                                                 </>}
                                     </div>
                                         { clientErrors?.password && <span  className="text-sm text-red-400 font-semibold"> {clientErrors?.password}</span>}
                                 </div>
