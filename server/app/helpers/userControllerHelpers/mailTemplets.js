@@ -1,3 +1,7 @@
+/**
+ * HTML template for sending an OTP (One-Time Password) email for user login verification.
+ * @constant {string} OTP_EMAIL_TEMPLATE - The HTML string containing the email template.
+*/
 export const OTP_EMAIL_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">

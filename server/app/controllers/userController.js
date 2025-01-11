@@ -1,17 +1,26 @@
 import bcryptjs from "bcryptjs"
 import _ from  "lodash";
-import twilio  from "twilio";
-import nodemailer from "nodemailer";
-
 import User from "../models/userModel.js"
 import OTP from "../models/otpModel.js";
-import checkCollection from "../helpers/checkCollection.js";
-import checkOtpCollection from "../helpers/checkOtpCollection.js";
-import generateToken from "../helpers/generateToken.js";
-import { OTP_EMAIL_TEMPLATE } from "../helpers/mailTemplets.js";
+import checkCollection from "../helpers/userControllerHelpers/checkCollection.js"
+import generateToken from "../helpers/userControllerHelpers/generateToken.js";
 
 const userController = {}
-
+/**
+ * This function handles user sign-up process.
+ * This function accepts user input from the request body, validates and processes the information, 
+    and creates a new user record in the database. It performs the following steps:
+ * 1. Extracts necessary fields (name, email, role, password, and phoneNumber) from the request body using lodash .
+ * 2. Checks if the user is attempting to create an account with the role 'admin' when there are already existing users (to restrict multiple admins).
+ * 3. Hashes the user's password for secure storage.
+ * 4. Sets the user's verification status based on the role (unverified for 'doctor', verified for others).
+ * 5. Saves the user record to the database.
+ * 6. Returns the user details (excluding sensitive data like password) in the response if successful.
+ * 7. If any error occurs during the process, an error message is returned with a 500 status code.
+ * @param {Object} req - The request object containing user sign-up data.
+ * @param {Object} res - The response object to send back the result.
+ * @returns {Object} - A JSON response containing either the created user data or an error message.
+*/
 userController.signUp =  async ( req, res ) => {
     try {
         const { name, email, role, password, phoneNumber }  = _.pick( req.body, [ "name", "email", "password", "role", "phoneNumber"] );
@@ -32,6 +41,21 @@ userController.signUp =  async ( req, res ) => {
     }
 }
 
+/**
+ * this function handles user sign-in process.
+ * This function accepts user login credentials (email or phone number, and password) from the request body,
+ ** performs the following actions:
+ * 1. Checks if either email or phone number is provided in the request body; if not, it returns a 400 error.
+ * 2. Searches the database for the user using either the phone number or email (depending on the provided input).
+ * 3. If no user is found, it returns a 400 error indicating that the email or phone number is not registered.
+ * 4. Compares the provided password with the stored password hash using bcryptjs to validate the credentials.
+ * 5. If the password is invalid, it returns a 400 error.
+ * 6. If the credentials are valid, it generates a JWT token for the user and returns it in the response.
+ * 7. In case of any errors during the process, it returns a 500 error with a generic error message.
+ * @param {Object} req - The request object containing the user's login credentials (email or phone number, and password).
+ * @param {Object} res - The response object to send back the result (JWT token or error message).
+ * @returns {Object} - A JSON response containing either the generated token or an error message.
+*/
 userController.signIn = async ( req, res ) => {
     try {
         const {  email, password, phoneNumber }  = _.pick ( req.body, [ "email", "password" , "phoneNumber"] ); 
@@ -53,99 +77,17 @@ userController.signIn = async ( req, res ) => {
     }
 }
 
-userController.sendSmsOtp = async ( req, res ) => {
-    try {
-        const { phoneNumber } = _.pick ( req.body, [ "phoneNumber"] );
-        const user = await checkCollection( { phoneNumber : phoneNumber } );
-        if( !user ) {
-            return res.status( 400 ).json ( { error : "Phone Number is not Registered " } );
-        }
-        const accountSid =  process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN;
-        const client = twilio( accountSid, authToken );
-        const { otp } = await checkOtpCollection( user._id );
-        const messageOptions = {
-            from : process.env.TWILIO_FROM_NUMBER,
-            to :  `+91${ phoneNumber }`,
-            body : `Your One-Time-Password( OTP ) for the DOCZY Application login is ${ otp }`
-        }
-        await client.messages.create( messageOptions );
-        res.json(  { succes : true , message  : "OTP sent succesfully" } );
-    } catch (error) {
-        console.log( error.message );
-        return res.status( 500 ).json ( { error : "Something went wrong! "})
-    }
-}
-
-userController.sendEmailOtp = async ( req, res ) => {
-    try {
-        const { email } = _.pick( req.body, [ "email" ] );
-        const user = await checkCollection( { email : email } );
-        if( !user ){
-            return res.status( 401 ).json( { error : "Email is not registered "})
-        }
-        const { otp } = await checkOtpCollection( user._id );
-        const transporter =   nodemailer.createTransport({
-            service : "gmail",
-            auth : {
-                user : process.env.ADMIN_EMAIL,
-                pass : process.env.ADMIN_PASS
-            }
-        })
-        let mailOptions = {
-            from: process.env.ADMIN_EMAIL,
-            to: email, 
-            subject: " OTP code for Login ", 
-            html : OTP_EMAIL_TEMPLATE.replace( "{verificationCode}", otp )
-        };
-        const info = await transporter.sendMail(mailOptions)
-        if( !info ){
-            throw new Error ( "something went wrong in mail config")
-        }
-        res.status( 201 ).json({  message   : "OTP sent succesfully "});
-    } catch (error) {
-        res.status( 500 ).json( { error : "Something went wrong! "});
-    }
-}
-
-userController.verifyOtp =  async ( req, res ) => {
-    try {
-        const { email, phoneNumber, otp } = _.pick( req.body , [ "email", "phoneNumber", "otp" ] );
-        if ( !(phoneNumber || email) ) {
-            return res.status( 400 ).json( { error : "Phone Number / email required " } );
-        }
-        const  user = await checkCollection ( phoneNumber ? { phoneNumber }: {email} );
-        const getOtp = await OTP.findOne( { userId : user._id } );
-        if( !user  || !getOtp ) {
-            throw new Error ( " OTP not found for this user")
-        }
-        if( getOtp.retryCounts ===  0 ){
-            return res.status( 400 ).json( { error : "Exceded the attempts for login try after some time" } );
-        }
-        const currentTime = new Date();
-        if( currentTime > getOtp.expireAt ){
-            return res.status( 400 ).json ( { error : "OTP has expired"})
-        }
-        if( getOtp.otp == otp ) {
-            const token = await generateToken ( user );
-            return res.json( { token : `Bearer ${ token }`} );   
-        } else {
-            const newCount  = {
-                retryCounts  : getOtp.retryCounts - 1
-            }
-            const  updateCount = await OTP.findOneAndUpdate( { userId:  user.id}, newCount , { new : true } );
-            console.log( updateCount );
-            return res.status( 400 ).json( { error : "Invalid OTP try again "})
-        }
-
-    } catch (error) {
-        res.status( 500 ).json ( { error : "Something went wrong! "})
-    }
-}
-
+/**
+ * This function handles the authenticated user's account information.
+ * This function returns the user details based on the current authenticated user. 
+ * @param {Object} req - The request object, containing `currentUser` set by JWT verification middleware.
+ * @param {Object} res - The response object to send back the authenticated user's data.
+ * @returns {Object} - A JSON response containing the authenticated user's details.
+ */
 userController.account =  async ( req, res ) => {
     try {
-        res.json( req.currentUser );
+        const body = _.pick(req.currentUser, ["userId", "role", "name", "isVerified"] )
+        res.json( body );
     } catch (error) {
         res.status( 500 ).json ( { error : "Something went wrong!"})
     }

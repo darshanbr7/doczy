@@ -1,30 +1,29 @@
-import User from "../models/userModel.js"
-/* importing helper function to make a db call to check phone no and email is already exist or not */
-import checkCollection from "../helpers/checkCollection.js"
+import checkCollection from "../helpers/userControllerHelpers/checkCollection.js";
+import email from "./constants/email.js";
+import password from "./constants/password.js";
+import phoneNumber from "./constants/phoneNumber.js";
+import otp from "./constants/otp.js"
+import name from "./constants/name.js";
+import role from "./constants/role.js";
+
+/**
+ * Defining a validation schema for user registration. This schema ensures that the following fields are validated:
+ * 1. 'name' - validation as per the defined 'name' variable.
+ * 2. 'email' - validation as per the defined 'email' variable.
+ *            - Custom validation checks if the email already exists in the collection.
+ * 3. 'phoneNumber' - validation as per the defined 'phoneNumber' variable
+ *                  - Custom validation checks if the phone number already exists in the collection.
+ * 4. 'password' -  validation as per the defined 'password' variable
+ *                  - Checks if the password meets the required length and custom validation to prevent repeated characters.
+ * 5. 'role' -  validation as per the defined 'role' variable.
+ * The schema ensures the fields conform to expected standards and throws appropriate error messages if they fail.
+ */
 export const userRegisterSchema = {
     name : {
-        in : [ "body" ],
-        exists : {
-            errorMessage : "name field is required"
-        },
-        notEmpty : {
-            errorMessage : "name field should not be empty"
-        },
-        trim : true
+        ...name
     },
     email :{
-        in : [ "body" ],
-        exists : {
-            errorMessage : "Email field is required"
-        },
-        notEmpty : {
-            errorMessage : "Email field should not be empty"
-        },
-        isEmail : {
-            errorMessage : "Enter the proper Email format"
-        },
-        trim : true,
-        normalizeEmail : true,
+        ...email,
         custom : {
             options : async (  value ) => {
                 try {
@@ -40,27 +39,7 @@ export const userRegisterSchema = {
         }
     },
     phoneNumber : {
-        in : [ "body" ],
-        exists : {
-            errorMessage : " Phone Number is required "
-        },
-        notEmpty : {
-            errorMessage : "Phone Number should not be empty"
-        },
-        trim : true,
-        isNumeric : {
-            options : {
-                no_symbols: true, // using this property we can prevent + - to added to phone number
-            },
-            errorMessage : "Phone Number should consists only Number"
-        },
-        isLength : {
-            options : {
-                min : 10,
-                max : 10
-            },
-            errorMessage : "Phone Number should be 10 degits"
-        },
+        ...phoneNumber,
         custom : {
             options :   async ( value ) => {
                 try {
@@ -76,24 +55,7 @@ export const userRegisterSchema = {
         }
     },
     password: {
-        in : [ "body" ],
-        exists : {
-            errorMessage : "password feild is required",
-        },
-        notEmpty : {
-            errorMessage :  "password should not be empty"
-        },
-        trim : true,
-        isStrongPassword : {
-            options : {
-                minLength : 8,
-                minNumber : 1,
-                minUpperCase : 1,
-                minLowerCase : 1,
-                minSymbol : 1                
-            },
-            errorMessage : "Password shold contain one UpperCase, one LowerCase, one Number and one Symbol with minimum eight character "
-        },
+        ...password,
         isLength : { /*  adding min -  max  Length to the password  */
             options : {
                 min : 8,
@@ -111,105 +73,41 @@ export const userRegisterSchema = {
         }
     },
     role : {
-        in : [ "body" ],
-        exists : {
-            errorMessage : "Role  field is required"
-        },
-        notEmpty : {
-            errorMessage : "Role field should not be empty"
-        },
-        trim : true,
-        isIn : {/*  this property check the role */
-            options: [ [ "admin", "doctor", "customer" ] ],
-            errorMessage : "Role Should be one of the following Doctor or Customer"
-        }
+        ...role
     }
 }
-
+/**
+ * Defining a validation schema for user login. This schema ensures that the following fields are validated:
+ * 1. 'email' - validation as per the defined 'email' variable.
+ *            - This field is optional during login.
+ * 2. 'phoneNumber' - validation as per the defined 'phoneNumber' variable.
+ *                  - This field is optional during login.
+ * 3. 'password' - validation as per the defined 'password' variable.
+ *                  - This field is optional during login.
+ * 4. 'otp' - validation as per the defined 'otp' variable.
+ *           - This field is optional during login.
+ * The schema ensures the fields conform to expected standards and throws appropriate error messages if they fail.
+* here user can go with fallowing combinations
+    * email - password
+    * phoneNumber - password
+    * email - OTP
+    * phoneNumber - OTP
+*/
 export const  userLoginSchema = {
     email : {
-        in : [ "body" ], 
-        exists : {
-            errorMessage : "Email field is required"
-        },
-        notEmpty : {
-            errorMessage : 'Email field should not be empty'
-        },
-        isEmail : {
-            errorMessage : "Enter the proper Email format"
-        },
-        optional : true,
-        normalizeEmail :  true,
-        trim : true,
+        ...email,
+        optional : true
     },
     phoneNumber : {
-        in : [ "body" ],
-        exists : {
-            errorMessage : "Phone Number is required"
-        },
-        notEmpty : {
-            errorMessage : "Phone Number Should not be empty"
-        },
-        trim :  true,
-        isLength : {
-            options :{
-                min : 10,
-                max:  10
-            },
-            errorMessage : "Phone Number should be 10 degits"
-        },
-        isNumeric : {
-            options : {
-                no_symbols :  true
-            },
-            errorMessage : "Phone Number consis only Number"
-        },
+        ...phoneNumber,
         optional : true
     },
     password : {
-        in : [ "body" ],
-        exists : {
-            errorMessage : "Password field is required"
-        },
-        notEmpty : {
-            errorMessage : "Password Should not be empty"
-        },
-        trim : true,
+        ...password,
         optional : true,
-        isStrongPassword : {
-            options : {
-                minLength : 8,
-                minNumber : 1,
-                minUpperCase : 1,
-                minLowerCase : 1,
-                minSymbol : 1
-            }, 
-            errorMessage : "Password should contain one UpperCase, one LowerCase, one Number and one Symbol with minimum eight character"
-        }
     },
     otp : {
-        in : [ "body" ],
-        exists : {
-            errorMessage : "OTP is required"
-        },
-        notEmpty : {
-            errorMessage : "OTP Should not be empty"
-        },
-        trim :  true,
-        isLength : {
-            options :{
-                min : 6,
-                max:  6
-            },
-            errorMessage : "OTP should be 6 degits"
-        },
-        isNumeric : {
-            options : {
-                no_symbols :  true
-            },
-            errorMessage : "OTP consis only Number"
-        },
+        ...otp,
         optional : true
-        
     }
 }
