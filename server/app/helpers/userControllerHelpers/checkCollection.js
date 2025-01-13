@@ -9,7 +9,8 @@ const checkCollection =  async ( value ) => {
         const user = await User.findOne( value );
         return user;
     } catch (error) {
-        throw new Error ( error.message );
+        throw new Error ( [ { msg : error.message } ] );
     }
 }
+
 export default checkCollection;

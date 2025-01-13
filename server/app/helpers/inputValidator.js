@@ -5,8 +5,8 @@ import { validationResult } from "express-validator";
  * @param {Object} res - The Express response object, used to send validation error responses.
  * @param {Function} next - The Express `next` function to pass control to the next middleware.
  * @returns {void|Response} -
-                            * If validation errors are found, sends a 400 status response with the list of errors.
-                            * If no errors are found, it calls the `next` middleware.
+    * If validation errors are found, sends a 400 status response with the list of errors.
+    * If no errors are found, it calls the `next` middleware.
 */
 const inputValidator = ( req, res, next ) => {
     try {
@@ -16,7 +16,8 @@ const inputValidator = ( req, res, next ) => {
         } 
         next();
     } catch( error ) {
-        throw new Error ( error.message );
+        throw new Error ( [ { msg : error.message } ] );
     }
 }
+
 export default inputValidator;

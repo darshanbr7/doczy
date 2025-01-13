@@ -1,22 +1,8 @@
 import checkCollection from "../helpers/userControllerHelpers/checkCollection.js";
-import email from "./constants/email.js";
-import password from "./constants/password.js";
-import phoneNumber from "./constants/phoneNumber.js";
-import otp from "./constants/otp.js"
-import name from "./constants/name.js";
-import role from "./constants/role.js";
+import { email,name, password, phoneNumber, role, otp } from "./reqConstants.js";
 
 /**
- * Defining a validation schema for user registration. This schema ensures that the following fields are validated:
- * 1. 'name' - validation as per the defined 'name' variable.
- * 2. 'email' - validation as per the defined 'email' variable.
- *            - Custom validation checks if the email already exists in the collection.
- * 3. 'phoneNumber' - validation as per the defined 'phoneNumber' variable
- *                  - Custom validation checks if the phone number already exists in the collection.
- * 4. 'password' -  validation as per the defined 'password' variable
- *                  - Checks if the password meets the required length and custom validation to prevent repeated characters.
- * 5. 'role' -  validation as per the defined 'role' variable.
- * The schema ensures the fields conform to expected standards and throws appropriate error messages if they fail.
+ * Defining a validation schema for user registration. This schema ensures that the following fields are validated
  */
 export const userRegisterSchema = {
     name : {
@@ -78,15 +64,6 @@ export const userRegisterSchema = {
 }
 /**
  * Defining a validation schema for user login. This schema ensures that the following fields are validated:
- * 1. 'email' - validation as per the defined 'email' variable.
- *            - This field is optional during login.
- * 2. 'phoneNumber' - validation as per the defined 'phoneNumber' variable.
- *                  - This field is optional during login.
- * 3. 'password' - validation as per the defined 'password' variable.
- *                  - This field is optional during login.
- * 4. 'otp' - validation as per the defined 'otp' variable.
- *           - This field is optional during login.
- * The schema ensures the fields conform to expected standards and throws appropriate error messages if they fail.
 * here user can go with fallowing combinations
     * email - password
     * phoneNumber - password
