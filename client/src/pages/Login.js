@@ -1,18 +1,32 @@
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {  useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux"
 import { isEmail, isNumeric } from "validator";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import {ToastContainer, toast } from "react-toastify"
+import { userLogin, getUser } from "../slices/userSlice";
+import Spinner from "./Spinner";
 import InfoPage from "../images/InfoPage.jpg"
 const Login = ( ) => {
     const location = useLocation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { isLoading, isLoggedIn ,serverError, userInfo } = useSelector( ( state ) => state.user );
     const [ loginInput, setLoginInput ] = useState("");
     const [ password, setPassword ] = useState("")
     const [ click, setClick ] = useState( false );
     const [ clientErrors, setClientErrors ] = useState( null );
+    useEffect( () => {
+        if( isLoggedIn ) {
+            dispatch( getUser() )
+           toast.success( "User Login succesfully", {
+            autoClose: 2000
+           })
+            navigate("/dashboard");
+        }
+    }, [isLoggedIn])
     const errors = {}
     const validateInput = ( ) => {
-        
         if( loginInput.trim().length === 0 ) {
             errors.loginInput = "Email / Phone Number field can not be empty"
         } else  if( isNumeric( loginInput ) ){
@@ -32,14 +46,19 @@ const Login = ( ) => {
         validateInput();
         if( Object.keys( errors).length > 0){
             setClientErrors( errors );
-            
         } else {
             setClientErrors( {} );
-           ( ( ) => toast.success( "Login Succesfully!"))()
+            const formData = {
+                [isEmail(loginInput) ? "email" : "phoneNumber"]: loginInput,
+                password
+              };
+            dispatch( userLogin(formData));
+            console.log( "token generated" );
         }
     }
     return (
         <div className="max-w-screen-xl h-auto   ">
+        { isLoading && <Spinner/>}
             <div className="flex items-center justify-center h-auto">
                 <div className="w-2/3  font-bold opacity-70 bg-inherit  shadow-lg flex justify-center ">
                     <span className = "p-3 mr-10"> <Link to = "/register" > Register </Link></span>
@@ -64,6 +83,9 @@ const Login = ( ) => {
                 <div className="w-1/2 h-full flex max-w-screen-sm ">
                     <div className= " bg-inherit  mt-4" >
                         <div className="bg-white p-8 rounded-lg shadow-md w-96  mt-10   mb-20">
+                        { Array.isArray( serverError ) && serverError.map ( ( ele ) => {
+                            return  <p className=" text-sm text-red-400 "> { ele.msg }</p>
+                        })}
                             <form onSubmit={handleSubmit}>
                                 <div className=" mb-7 block ">
                                     <label className="   ml-1 block   text-sm font-medium text-gray-700"> Phone Number / Email ID  : </label>

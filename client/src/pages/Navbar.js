@@ -1,14 +1,18 @@
-import { Link } from "react-router-dom"
-import { useSelector } from "react-redux"
+import { Link, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
 import { logout } from "../slices/userSlice"
 import { toast, ToastContainer } from "react-toastify"
 const Navbar = ( ) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const { isLoggedIn }  = useSelector( state => state.user )
     const handleLogout = ( ) => {
-        console.log( "logout function" )
-        logout();
+        dispatch( logout() );
         localStorage.removeItem( "token" );
-        ( () => toast.success( "User logout succesfully"))()
+       toast.success( "User logout succesfully", {
+        autoClose: 2000
+       })
+        navigate("/login")
     }
     return (
         <nav className=" bg-green-200 p-3 shadow-sm ">
@@ -21,9 +25,12 @@ const Navbar = ( ) => {
                     </span>
                 </div>
                 <div className = " space-x-6 text-white">
+                   
                     { isLoggedIn ? <>
                                     <p  className="ml-4 text-bold cursor-pointer" onClick={ handleLogout}>  Logout </p> 
-                                    </> : <>
+                                    <p className="ml-4 text-bold cursor-pointer"> <Link to = "/dashboard"> Dashboard </Link>  </p>
+                                    </> 
+                                    : <>
                                     <p  className="ml-4 text-bold cursor-pointer"><Link to = "/login"> Login </Link></p>
                                     </>}
                  </div>
