@@ -18,7 +18,7 @@ userController.signUp =  async ( req, res ) => {
         const user  = new User ( { name, email, phoneNumber, password, role });
         const count =  await User.countDocuments();
         if ( count !== 0 &&  role == "admin" ){
-            return res.status( 500 ).json ( [{ msg : "Con't able to create an account as a admin"}]);
+            return res.status( 500 ).json ( { error : [{ msg : "Con't able to create an account as a admin"}]});
         }
         const salt =  await bcryptjs.genSalt();
         const hash = await bcryptjs.hash( password, salt );
@@ -28,7 +28,7 @@ userController.signUp =  async ( req, res ) => {
         const body  = _.pick( user, [ "_id", "name", "email", "phoneNumber", "role", "createdAt"] );
         return res.status( 201 ). json( body );
     } catch (error) {
-        return res.status( 500 ). json ( [{ msg :  "Something went wrong, while signUp!"}])
+        return res.status( 500 ). json ( { error : [{ msg :  "Something went wrong, while signUp!"}] })
     }
 }
 
@@ -43,20 +43,20 @@ userController.signIn = async ( req, res ) => {
     try {
         const {  email, password, phoneNumber }  = _.pick ( req.body, [ "email", "password" , "phoneNumber"] ); 
         if ( !(phoneNumber || email) ) {
-            return res.status( 400 ).json( [{ msg : "Phone Number / email required " }] );
+            return res.status( 400 ).json( { error : [{ msg : "Phone Number / email required " }]}) ;
         }
         const  user = await checkCollection ( phoneNumber ? { phoneNumber }: {email} );
         if( ! user ) {
-            return res.status( 400 ).json( [{ msg : "Email is not registered "}]);
+            return res.status( 400 ).json( { error : [{ msg : "Email / Phone Number is not registered "}]});
         }
         const isValid =  await bcryptjs.compare( password , user.password );
         if( !isValid ){
-            return res.status( 400 ).json( [{ msg : "Invalid Email / Password "}]);
+            return res.status( 400 ).json({ error : [{ msg : "Invalid Email / Password "}]} );
         }
         const token = await generateToken ( user );
         return res.json( { token : `Bearer ${ token }`} );
     } catch (error) {
-        return res.status( 500 ).json( [{ msg : "Something went wrong! while signIn"}])
+        return res.status( 500 ).json( { error : [{ msg : "Something went wrong! while signIn"}]})
     }
 }
 
@@ -71,7 +71,7 @@ userController.account =  async ( req, res ) => {
         const body = _.pick(req.currentUser, ["userId", "role", "name", "isVerified"] )
         res.json( body );
     } catch (error) {
-        res.status( 500 ).json ( [{ msg : "Something went wrong while fetching account details!"}])
+        res.status( 500 ).json ( { error :[{ msg : "Something went wrong while fetching account details!"}]})
     }
 }
 

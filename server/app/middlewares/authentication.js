@@ -11,13 +11,13 @@ const authentication = ( req, res, next ) => {
     try {
         let token = req.headers["authorization"];
         if( !token ){
-            return res.status( 400 ).json ({ error : "Token is required" } );
+            return res.status( 400 ).json ({ error : [ { msg : "Token is required"}]} );
         } 
         token = token.split(" ")[ 1 ];
         const secretKey = process.env.JWT_SECRET;
         const isValid = jwt.verify( token, secretKey );
         if( !isValid ) {
-            return res.status( 401 ). json ({ error : "Token is invalid "})
+            return res.status( 401 ). json ({ error : [ { msg : "Token is invalid "}]})
         }
         const currentUser = {
             userId : isValid.userId,
@@ -28,7 +28,7 @@ const authentication = ( req, res, next ) => {
         req.currentUser = currentUser;
        return next();
     } catch (error) {
-        res.status( 500 ).json ( [ { msg : "Something went wrong, Error while authenticating the request" } ] );
+        res.status( 500 ).json ( { error : [ { msg : "Something went wrong, Error while authenticating the request" } ]} );
     }
 }
 export default authentication;

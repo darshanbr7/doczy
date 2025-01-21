@@ -18,7 +18,7 @@ otpController.sendSmsOtp = async ( req, res ) => {
         const { phoneNumber } = _.pick ( req.body, [ "phoneNumber"] );
         const user = await checkCollection( { phoneNumber : phoneNumber } );
         if( !user ) {
-            return res.status( 400 ).json ( [ { msg : "Phone Number is not Registered " }] );
+            return res.status( 400 ).json ( { error : [ { msg : "Phone Number is not Registered " }] });
         }
         const accountSid =  process.env.TWILIO_ACCOUNT_SID;
         const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -32,7 +32,7 @@ otpController.sendSmsOtp = async ( req, res ) => {
         await client.messages.create( messageOptions );
         res.json(  {  message  : "OTP sent succesfully" } );
     } catch (error) {
-        return res.status( 500 ).json ( [ { msg : "Something went wrong, while sending sms "}])
+        return res.status( 500 ).json ({ error :  [ { msg : "Something went wrong, while sending sms "}] })
     }
 }
 
@@ -47,7 +47,7 @@ otpController.sendEmailOtp = async ( req, res ) => {
         const { email } = _.pick( req.body, [ "email" ] );
         const user = await checkCollection( { email : email } );
         if( !user ){
-            return res.status( 401 ).json( [{ msg : "Email is not registered "}])
+            return res.status( 401 ).json( { error : [{ msg : "Email is not registered "}]})
         }
         const { otp } = await generateOtp( user._id );
         const transporter =   nodemailer.createTransport({
@@ -69,7 +69,7 @@ otpController.sendEmailOtp = async ( req, res ) => {
         }
         res.status( 201 ).json({  message   : "OTP sent succesfully "});
     } catch (error) {
-        res.status( 500 ).json([ { msg : "Something went wrong, Error while sending Email OTP! "}]);
+        res.status( 500 ).json({ error : [ { msg : "Something went wrong, Error while sending Email OTP! "}]});
     }
 }
 
@@ -83,7 +83,7 @@ otpController.verifyOtp =  async ( req, res ) => {
     try {
         const { email, phoneNumber, otp } = _.pick( req.body , [ "email", "phoneNumber", "otp" ] );
         if ( !(phoneNumber || email) ) {
-            return res.status( 400 ).json( [{ msg  : "Phone Number / email required " }] );
+            return res.status( 400 ).json( { error : [{ msg  : "Phone Number / email required " }]} );
         }
         const  user = await checkCollection ( phoneNumber ? { phoneNumber }: {email} );
         const getOtp = await OTP.findOne( { userId : user._id } );
@@ -91,13 +91,11 @@ otpController.verifyOtp =  async ( req, res ) => {
             throw new Error ( "OTP not found for this user")
         }
         if( getOtp.retryCounts ===  0 ){
-            return res.status( 400 ).json( [{ msg : "Exceded the attempts for login try after some time" }] );
+            return res.status( 400 ).json( { error : [{ msg : "Exceded the attempts for login try after some time" }]} );
         }
         const currentTime = new Date();
         if( currentTime > getOtp.expireAt ){
-            return res.status( 400 ).json ( [{ msg : "OTP has expired"}])
-        }
-        if( getOtp.otp == otp ) {
+            return res.status( 400 ).json ( { error : [{ msg : "OTP has expired"}] })
             const token = await generateToken ( user );
             return res.json( { token : `Bearer ${ token }`} );   
         } else {
@@ -105,11 +103,11 @@ otpController.verifyOtp =  async ( req, res ) => {
                 retryCounts  : getOtp.retryCounts - 1
             }
             await OTP.findOneAndUpdate( { userId:  user.id}, newCount , { new : true } );
-            return res.status( 400 ).json( [{ msg : "Invalid OTP try again "}])
+            return res.status( 400 ).json( { error : [{ msg : "Invalid OTP try again "}]})
         }
 
     } catch (error) {
-        res.status( 500 ).json ( [{ msg : "Something went wrong, while verifying the  OTP! "}])
+        res.status( 500 ).json ( { error : [{ msg : "Something went wrong, while verifying the  OTP! "}]})
     }
 }
 
