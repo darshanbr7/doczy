@@ -1,15 +1,25 @@
 import {createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axiosInstance from "../utils/axiosInstance";
 
+export const userRegister = createAsyncThunk( "auth/userRegister",  async ( formData, { rejectWithValue } ) => {
+    try {
+        const response = await axiosInstance.post("/auth/signUp", formData);
+        console.log( response.data );
+        return true;
+    } catch (error) {
+        console.log( error )
+        return rejectWithValue( error?.response?.data?.error )
+    }    
+})
+
 export const userLogin = createAsyncThunk("user/userLogin", async ( formData, { rejectWithValue} ) => {
     try {
         const response =  await axiosInstance.post("/auth/signIn", formData );
         localStorage.setItem("token", response.data.token );
-        console.log( "success",response.data);
         return response.data;
     } catch (error) {
-        console.log("error", error )
-        return  rejectWithValue( error?.response?.data[0]?.msg );
+        console.log("error", error ) 
+        return  rejectWithValue( error?.response?.data?.error );
     }
 })
 
@@ -21,13 +31,14 @@ export const getUser = createAsyncThunk( "user/getUser", async ( _, { rejectWith
         }
         })
         return response.data;
-    } catch (error) {
-        return rejectWithValue( error?.response?.data[0]?.msg)
+    } catch (error) {   
+        return rejectWithValue( error?.response?.data?.error)
     }
 })
 
-const userSlice = createSlice( {
-    name : "user",
+
+const authSlice = createSlice( {
+    name : "auth",
     initialState : {
         userInfo: null,
         isLoggedIn : false,
@@ -44,6 +55,19 @@ const userSlice = createSlice( {
         }
     },
     extraReducers : ( builders ) => {
+        builders.addCase( userRegister.pending, ( state ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( userRegister.fulfilled, ( state ) => {
+            state.isLoading = false
+            state.serverError = null
+        })
+        builders.addCase ( userRegister.rejected, ( state, action ) => {
+            state.serverError = action.payload;
+            state.isLoggedIn = false;
+            state.isLoading = false
+
+        })
         builders.addCase( userLogin.pending, ( state ) => {
             state.isLoading = true;
         })
@@ -73,7 +97,8 @@ const userSlice = createSlice( {
             state.userInfo = null;
             state.isLoggedIn = false;
         })
+
     }
 })
-export const {  setLoader, logout } = userSlice.actions;
-export default userSlice.reducer;
+export const {  setLoader, logout } = authSlice.actions;
+export default authSlice.reducer;

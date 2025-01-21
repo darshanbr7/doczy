@@ -4,33 +4,27 @@ import { useDispatch, useSelector } from "react-redux"
 import { isEmail, isNumeric } from "validator";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import {ToastContainer, toast } from "react-toastify"
-import { userLogin, getUser } from "../slices/userSlice";
+import { userLogin, getUser } from "../slices/authSlice";
 import Spinner from "./Spinner";
 import InfoPage from "../images/InfoPage.jpg"
 const Login = ( ) => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { isLoading, isLoggedIn ,serverError, userInfo } = useSelector( ( state ) => state.user );
+    const { isLoading ,serverError, userInfo } = useSelector( ( state ) => state.auth );
     const [ loginInput, setLoginInput ] = useState("");
     const [ password, setPassword ] = useState("")
     const [ click, setClick ] = useState( false );
     const [ clientErrors, setClientErrors ] = useState( null );
-    useEffect( () => {
-        if( isLoggedIn ) {
-            dispatch( getUser() )
-           toast.success( "User Login succesfully", {
-            autoClose: 2000
-           })
-            navigate("/dashboard");
-        }
-    }, [isLoggedIn])
     const errors = {}
+    /**
+     * This Function is used to Validate the input recived from the user
+    */
     const validateInput = ( ) => {
         if( loginInput.trim().length === 0 ) {
             errors.loginInput = "Email / Phone Number field can not be empty"
         } else  if( isNumeric( loginInput ) ){
-            if( loginInput.length < 10 || loginInput.length > 10){
+            if( loginInput.trim().length < 10 || loginInput.trim().length > 10){
                 errors.loginInput = " Phone Number should be 10 degits "
             }
         } else if(!isEmail( loginInput ) ){
@@ -41,7 +35,11 @@ const Login = ( ) => {
             errors.password = "Password field can not be empty"
         } 
     } 
-    const handleSubmit = ( e ) => {
+    /**
+     * This function is used to Handle the Login Functionalities
+     * @param {*} e  - It Takes event as a argumet and invoke the validateInput function dispatches the reducers
+     */
+    const handleSubmit = async ( e ) => {
         e.preventDefault()
         validateInput();
         if( Object.keys( errors).length > 0){
@@ -51,9 +49,17 @@ const Login = ( ) => {
             const formData = {
                 [isEmail(loginInput) ? "email" : "phoneNumber"]: loginInput,
                 password
-              };
-            dispatch( userLogin(formData));
-            console.log( "token generated" );
+                };
+            try {
+              const loginAction= await dispatch( userLogin ( formData ));
+              console.log( loginAction && loginAction.type === userLogin.fulfilled.type );
+              if( loginAction && loginAction.type === userLogin.fulfilled.type ){
+               await dispatch( getUser() )
+                navigate("/")
+              }
+            } catch (error) {
+                console.log( error )
+            }
         }
     }
     return (
@@ -72,7 +78,7 @@ const Login = ( ) => {
                     <img
                     src={InfoPage}
                     alt="application Info page"
-                    className="rounded-lg mt-12"
+                    className="rounded-lg mt-24"
                     height="350"
                     width="350"
                     style={ {
@@ -81,11 +87,8 @@ const Login = ( ) => {
                     />
                 </div>
                 <div className="w-1/2 h-full flex max-w-screen-sm ">
-                    <div className= " bg-inherit  mt-4" >
+                    <div className= " bg-inherit  mt-6" >
                         <div className="bg-white p-8 rounded-lg shadow-md w-96  mt-10   mb-20">
-                        { Array.isArray( serverError ) && serverError.map ( ( ele ) => {
-                            return  <p className=" text-sm text-red-400 "> { ele.msg }</p>
-                        })}
                             <form onSubmit={handleSubmit}>
                                 <div className=" mb-7 block ">
                                     <label className="   ml-1 block   text-sm font-medium text-gray-700"> Phone Number / Email ID  : </label>
@@ -130,20 +133,32 @@ const Login = ( ) => {
                                     </div>
                                         { clientErrors?.password && <span  className="text-sm text-red-400 font-semibold"> {clientErrors?.password}</span>}
                                 </div>
-                                <div className=" mb-2 flex justify-center items-center ">
+                                <div >
+                                {
+                                    serverError && serverError.map( ( ele, i ) =>{
+                                        return <li key={ i } className="text-sm font-semibold text-red-500 opacity-80"> { ele.msg }</li>
+                                    })
+                                }
+                                </div>
+                                <div className=" mt-2  mb-2 flex justify-center items-center ">
                                     <input type = "submit" 
                                         value= "Login"
                                         className="border rounded-md  bg-blue-400  text-white font-semibold  w-24 p-1 hover:bg-blue-600 focus:outline-none active:bg-blue-800"
                                         /> 
                                 </div>
                                 <div className="text-sm font-semibold text-gray-600">
-                                        <p className="hover:text-gray-800 hover:underline cursor-pointer"> Login with Email OTP</p>
-                                        <p className="hover:text-gray-800 hover:underline cursor-pointer"> Login with Phone Number OTP</p>
+                                        <p className="hover:text-gray-800  "> Login with <span className=" cursor-pointer hover:underline hover:text-blue-600"  onClick={ () => {
+                                            navigate("/option-login", { state : "email"})
+                                        }}> Email</span> / <span className=" cursor-pointer hover:underline hover:text-blue-600"  onClick={ () => {
+                                            navigate("/option-login", { state : "phoneNumber"})
+                                        }}> Phone Number</span> OTP</p>
+                                       
                                 </div>
                                 <div className="text-sm  mt-2   flex justify-end font-semibold text-blue-600 ">
                                     <p className="hover:underline cursor-pointer" > Forgot password ?</p>
                                 </div>
                             </form>
+                            
                         </div>
                     </div>
                 </div>

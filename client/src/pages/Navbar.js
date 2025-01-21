@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { logout } from "../slices/userSlice"
+import { logout } from "../slices/authSlice"
 import { toast, ToastContainer } from "react-toastify"
 const Navbar = ( ) => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const { isLoggedIn }  = useSelector( state => state.user )
+    const { isLoggedIn }  = useSelector( state => state.auth )
     const handleLogout = ( ) => {
         dispatch( logout() );
         localStorage.removeItem( "token" );
