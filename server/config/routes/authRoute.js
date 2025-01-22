@@ -15,8 +15,8 @@ authRoute.post( "/signUp", checkSchema( userRegisterSchema ), inputValidator, us
 authRoute.post ( "/signIn", checkSchema( userLoginSchema ),inputValidator, userController.signIn );
 
 // Route for sending an SMS OTP to the user's phone number and email.
-authRoute.post ( "/send-sms", checkSchema( { phoneNumber }), inputValidator,  otpController.sendSmsOtp );
-authRoute.post( "/send-email", checkSchema( { email } ), inputValidator, otpController.sendEmailOtp );
+authRoute.post ( "/phoneNumber/send-otp", checkSchema( { phoneNumber }), inputValidator,  otpController.sendSmsOtp );
+authRoute.post( "/email/send-otp", checkSchema( { email } ), inputValidator, otpController.sendEmailOtp );
 
 // Route for verifying the OTP provided by the user.
 authRoute.post ( "/verify-otp", checkSchema( userLoginSchema ), inputValidator, otpController.verifyOtp );

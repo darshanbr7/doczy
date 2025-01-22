@@ -96,15 +96,19 @@ otpController.verifyOtp =  async ( req, res ) => {
         const currentTime = new Date();
         if( currentTime > getOtp.expireAt ){
             return res.status( 400 ).json ( { error : [{ msg : "OTP has expired"}] })
-            const token = await generateToken ( user );
-            return res.json( { token : `Bearer ${ token }`} );   
         } else {
-            const newCount  = {
-                retryCounts  : getOtp.retryCounts - 1
+            if( otp == getOtp.otp ){
+                const token = await generateToken ( user );
+                return res.json( { token : `Bearer ${ token }`} );   
+            } else {
+                const newCount  = {
+                    retryCounts  : getOtp.retryCounts - 1
+                }
+                await OTP.findOneAndUpdate( { userId:  user.id}, newCount , { new : true } );
+                return res.status( 400 ).json( { error : [{ msg : "Invalid OTP try again "}]})
             }
-            await OTP.findOneAndUpdate( { userId:  user.id}, newCount , { new : true } );
-            return res.status( 400 ).json( { error : [{ msg : "Invalid OTP try again "}]})
         }
+        
 
     } catch (error) {
         res.status( 500 ).json ( { error : [{ msg : "Something went wrong, while verifying the  OTP! "}]})

@@ -1,8 +1,12 @@
 import bcryptjs from "bcryptjs"
 import _ from  "lodash";
+import randToken from "rand-token"
 import User from "../models/userModel.js"
+import Token from "../models/tokenModel.js";
+import nodemailer from "nodemailer";
 import checkCollection from "../helpers/userControllerHelpers/checkCollection.js"
 import generateToken from "../helpers/userControllerHelpers/generateToken.js";
+import { TOKEN_EMAIL_TEMPLATE } from "../helpers/userControllerHelpers/mailTemplets.js";
 
 const userController = {}
 /**
@@ -23,11 +27,34 @@ userController.signUp =  async ( req, res ) => {
         const salt =  await bcryptjs.genSalt();
         const hash = await bcryptjs.hash( password, salt );
         user.password = hash
-        user.role == "doctor" ? user.isVerified = false : user.isVerified = true;
+        user.role == "admin" ? user.isVerified = true : user.isVerified = false;
+        const token = randToken.generate(32);
+        await  new Token({ userId : user._id, token}).save();
+        const baseUrl = process.env.BASE_URL;
+        const url = `${baseUrl}/verify?userId=${user._id}&token=${token}`;
+        const transporter =   nodemailer.createTransport({
+            service : "gmail",
+            auth : {
+                user : process.env.ADMIN_EMAIL,
+                pass : process.env.ADMIN_PASS
+            }
+        })
+        let mailOptions = {
+            from: process.env.ADMIN_EMAIL,
+            to: email, 
+            subject: " Verify your account ", 
+            html : TOKEN_EMAIL_TEMPLATE.replace( "{token}", url )
+        };
+        const info = await transporter.sendMail(mailOptions)
+        if( !info ){
+            throw new Error ( "something went wrong in mail config")
+        }
         await user.save();
-        const body  = _.pick( user, [ "_id", "name", "email", "phoneNumber", "role", "createdAt"] );
-        return res.status( 201 ). json( body );
+        return res.status( 201 ).json({  message   : "Mail sent succesfully "});
+        /* const body  = _.pick( user, [ "_id", "name", "email", "phoneNumber", "role", "createdAt"] );
+        return res.status( 201 ). json( body ); */
     } catch (error) {
+        console.log( error )
         return res.status( 500 ). json ( { error : [{ msg :  "Something went wrong, while signUp!"}] })
     }
 }
