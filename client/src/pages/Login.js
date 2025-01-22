@@ -1,9 +1,9 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {  useEffect, useState } from "react";
+import {   useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { isEmail, isNumeric } from "validator";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import {ToastContainer, toast } from "react-toastify"
+import { toast } from "react-toastify"
 import { userLogin, getUser } from "../slices/authSlice";
 import Spinner from "./Spinner";
 import InfoPage from "../images/InfoPage.jpg"
@@ -11,7 +11,7 @@ const Login = ( ) => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { isLoading ,serverError, userInfo } = useSelector( ( state ) => state.auth );
+    const { isLoading ,serverError } = useSelector( ( state ) => state.auth );
     const [ loginInput, setLoginInput ] = useState("");
     const [ password, setPassword ] = useState("")
     const [ click, setClick ] = useState( false );
@@ -51,12 +51,11 @@ const Login = ( ) => {
                 password
                 };
             try {
-              const loginAction= await dispatch( userLogin ( formData ));
-              console.log( loginAction && loginAction.type === userLogin.fulfilled.type );
-              if( loginAction && loginAction.type === userLogin.fulfilled.type ){
-               await dispatch( getUser() )
-                navigate("/")
-              }
+                await dispatch( userLogin( formData )).unwrap().then( () => {
+                    dispatch( getUser() )
+                    toast.success("User Login Succesfully", { autoClose : 2000 })
+                    navigate("/")
+                })
             } catch (error) {
                 console.log( error )
             }
@@ -133,7 +132,7 @@ const Login = ( ) => {
                                     </div>
                                         { clientErrors?.password && <span  className="text-sm text-red-400 font-semibold"> {clientErrors?.password}</span>}
                                 </div>
-                                <div >
+                                <div >  
                                 {
                                     serverError && serverError.map( ( ele, i ) =>{
                                         return <li key={ i } className="text-sm font-semibold text-red-500 opacity-80"> { ele.msg }</li>
@@ -163,18 +162,6 @@ const Login = ( ) => {
                     </div>
                 </div>
             </div>
-            <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick={false}
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-                />
         </div>
     )
 }

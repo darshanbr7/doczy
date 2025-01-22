@@ -10,6 +10,8 @@ import Navbar from './pages/Navbar';
 import Register from './pages/Register';
 import Footer from './pages/Footer';
 import OptionLogin from './pages/OptionLogin';
+import Profile  from "./pages/Profile";
+import VerifyAccount from './pages/VerifyAccount';
 function App() {
   const location = useLocation();
   const dispatch = useDispatch()
@@ -30,7 +32,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path='/dashboard' element = { <Dashboard/>} />
+          <Route path='/profile' element = { <Profile/>} />
           <Route path='/option-login' element = { <OptionLogin />} />
+          <Route path = "/verify" element = { <VerifyAccount/>} />
         </Routes>
       </div>
       {showFooter.includes(location.pathname) && <Footer />}

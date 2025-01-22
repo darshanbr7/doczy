@@ -1,6 +1,8 @@
 import {createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axiosInstance from "../utils/axiosInstance";
-
+/**
+ * This function is used to Register the user
+ */
 export const userRegister = createAsyncThunk( "auth/userRegister",  async ( formData, { rejectWithValue } ) => {
     try {
         const response = await axiosInstance.post("/auth/signUp", formData);
@@ -12,6 +14,20 @@ export const userRegister = createAsyncThunk( "auth/userRegister",  async ( form
     }    
 })
 
+/**
+ * This function is used to verify the user account
+ */
+export const verifyAccount = createAsyncThunk ( "post/verifyAccount",  async ( { userId, token, isChecked}, { rejectWithValue} ) => {
+    try {
+        const response = await axiosInstance.put(`/auth/verify?userId=${userId}&token=${token}`, {isVerified: isChecked});
+        return response.data;
+    } catch (error) {
+       return rejectWithValue( error?.response?.data?.error );
+    }
+})
+/**
+ * This function is used to Login the user
+ */
 export const userLogin = createAsyncThunk("user/userLogin", async ( formData, { rejectWithValue} ) => {
     try {
         const response =  await axiosInstance.post("/auth/signIn", formData );
@@ -23,6 +39,33 @@ export const userLogin = createAsyncThunk("user/userLogin", async ( formData, { 
     }
 })
 
+/**
+ * This function is used to generate with Email / phone Number OTP
+ */
+ export const otherLoginOptions = createAsyncThunk( "post/otherLoginOptions", async ( {inputData, state}, { rejectWithValue } ) => {
+    try {
+       const response = await axiosInstance.post(`/auth/${state}/send-otp`, inputData );
+       return response.data; 
+    } catch (error) {
+        return  rejectWithValue( error?.response?.data?.error );
+    }
+})
+/**
+ * This function is used to verify the otp with Email / phone Number 
+ */
+export const otpVerify = createAsyncThunk( "post/otpVerify", async ( formData, { rejectWithValue } ) => {
+    try {
+       const response = await axiosInstance.post("/auth/verify-otp", formData );
+       console.log( response.data );
+       localStorage.setItem("token", response.data.token );
+       return response.data;
+    } catch (error) {
+        return  rejectWithValue( error?.response?.data?.error );
+    }
+})
+/**
+ * This function is used to get the user details bases on the token
+ */
 export const getUser = createAsyncThunk( "user/getUser", async ( _, { rejectWithValue} ) =>{
     try {
         const response = await axiosInstance.get("/auth/account",{
@@ -40,6 +83,7 @@ export const getUser = createAsyncThunk( "user/getUser", async ( _, { rejectWith
 const authSlice = createSlice( {
     name : "auth",
     initialState : {
+        otpSent : false,
         userInfo: null,
         isLoggedIn : false,
         isLoading : false,
@@ -52,6 +96,9 @@ const authSlice = createSlice( {
         logout : ( state ) => {
             state.isLoggedIn = false;
             state.user = null ;
+        },
+        setOtpSent : ( state, action ) => {
+            state.otpSent = action.payload;
         }
     },
     extraReducers : ( builders ) => {
@@ -63,6 +110,19 @@ const authSlice = createSlice( {
             state.serverError = null
         })
         builders.addCase ( userRegister.rejected, ( state, action ) => {
+            state.serverError = action.payload;
+            state.isLoggedIn = false;
+            state.isLoading = false
+
+        })
+        builders.addCase( verifyAccount.pending, ( state ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( verifyAccount.fulfilled, ( state ) => {
+            state.isLoading = false
+            state.serverError = null
+        })
+        builders.addCase ( verifyAccount.rejected, ( state, action ) => {
             state.serverError = action.payload;
             state.isLoggedIn = false;
             state.isLoading = false
@@ -82,6 +142,30 @@ const authSlice = createSlice( {
             state.isLoggedIn = false;
             state.serverError = action.payload;
         });
+        builders.addCase( otherLoginOptions.pending, ( state, action ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( otherLoginOptions.fulfilled, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = null;
+        })
+        builders.addCase( otherLoginOptions.rejected, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = action.payload
+        })
+        builders.addCase( otpVerify.pending, ( state, action ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( otpVerify.fulfilled, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = null;
+        })
+        builders.addCase( otpVerify.rejected, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = action.payload
+        })
+
+
         builders.addCase( getUser.pending, ( state ) => {
             state.isLoading = true;
         })
@@ -100,5 +184,5 @@ const authSlice = createSlice( {
 
     }
 })
-export const {  setLoader, logout } = authSlice.actions;
+export const {  setLoader, logout, setOtpSent  } = authSlice.actions;
 export default authSlice.reducer;

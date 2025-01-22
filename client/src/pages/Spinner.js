@@ -6,7 +6,7 @@ const Spinner = () => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         {/* Rotating Inner Circle */}
         <div
-          className="w-12 h-12 rounded-full border-4 border-solid"
+          className="w-12 h-12 rounded-full border-4 border-solid  animate-spin"
           style={{
             borderTopColor: '#FFFFFF', // Darker color for the top
             borderRightColor: 'transparent', // Transparent right side

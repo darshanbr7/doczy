@@ -1,7 +1,13 @@
+import SideNavbar from "./SideNavbar"
 const Profile = ( ) => {
     return (
-        <div>
-            <h2> Profile Page </h2>
+        <div className="flex max-w-screen-lg">
+            <div className="w-auto">
+                <SideNavbar/>       
+            </div>
+            <div>
+                
+            </div>
         </div>
     )
 }

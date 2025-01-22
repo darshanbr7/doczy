@@ -38,7 +38,7 @@ const Register = ( ) => {
           ...prevState, 
           role: prevState.role === "customer" ? "doctor" : "customer"
         }));
-      };
+    };
       
     const [ clientErrors, setClientErrors ] = useState( null );
     const errors ={};

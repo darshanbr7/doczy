@@ -1,19 +1,10 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { logout } from "../slices/authSlice"
-import { toast, ToastContainer } from "react-toastify"
+import { ToastContainer } from "react-toastify"
+import { CgProfile } from "react-icons/cg";
 const Navbar = ( ) => {
-    const navigate = useNavigate();
     const dispatch = useDispatch()
     const { isLoggedIn }  = useSelector( state => state.auth )
-    const handleLogout = ( ) => {
-        dispatch( logout() );
-        localStorage.removeItem( "token" );
-       toast.success( "User logout succesfully", {
-        autoClose: 2000
-       })
-        navigate("/login")
-    }
     return (
         <nav className=" bg-green-200 p-3 shadow-sm ">
              <div className="max-w-screen-xl mx-auto flex items-center justify-between">
@@ -26,13 +17,14 @@ const Navbar = ( ) => {
                 </div>
                 <div className = " space-x-6 text-white">
                    
-                    { isLoggedIn ? <>
-                                    <p  className="ml-4 text-bold cursor-pointer" onClick={ handleLogout}>  Logout </p> 
-                                    <p className="ml-4 text-bold cursor-pointer"> <Link to = "/dashboard"> Dashboard </Link>  </p>
-                                    </> 
-                                    : <>
+                    { isLoggedIn ? <div className="flex items-center">
+                                        <div className=" cursor-pointer mr-5"> 
+                                            <Link to = "/profile"> <CgProfile  size={25} color="blue"/></Link>
+                                        </div> 
+                                    </div>
+                                    : <div>
                                     <p  className="ml-4 text-bold cursor-pointer"><Link to = "/login"> Login </Link></p>
-                                    </>}
+                                    </div>}
                  </div>
             </div>
             <ToastContainer

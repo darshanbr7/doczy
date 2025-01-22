@@ -1,15 +1,22 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { isNumeric, isEmail } from "validator";
+import {useSelector, useDispatch } from "react-redux"
+import Spinner from "./Spinner";
+import {  otherLoginOptions, setOtpSent, otpVerify, getUser  } from "../slices/authSlice"
+import { toast } from "react-toastify";
+
 const OptionLogin = ( ) => {
     const location = useLocation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { otpSent ,isLoading, serverError} = useSelector( state => state.auth)
     const  { state } = location;
     const  [ formData, setFormData ] = useState( {
         [state] : "",
         otp : ""
     })
     const [ clientError , setClientErrors ] = useState("")
-    const [ otpSent, setOtpSent ] =  useState ( false );
     const errors = {}
     /**
      * This function is used to validate the Email or Phone Number
@@ -36,7 +43,19 @@ const OptionLogin = ( ) => {
             setClientErrors( errors )
         }else {
             setClientErrors( null )
-            setOtpSent( prevState => !prevState )
+           try {
+                const inputData = { [state] : formData[state]} 
+                await dispatch( otherLoginOptions( {inputData, state} )).unwrap()
+                            .then( () => {
+                                dispatch( setOtpSent( true ) );
+                            })
+                            .catch( ( ) => {
+                                dispatch( setOtpSent( false ) );
+                            }) 
+           } catch (error) {
+            console.log( error )
+            dispatch( setOtpSent( false ))
+           }
         }
     } 
     /**
@@ -54,17 +73,30 @@ const OptionLogin = ( ) => {
     /**
      * This Fuynction invokes the `validateOTP` function to validate the OTP input, and handles any validation errors and dispatches the reducers
      */
-    const handleSubmit = ( e ) => {
+    const handleSubmit = async ( e ) => {
         e.preventDefault();
         validateOTP();
         if( Object.keys( errors ).length > 0 ){
             setClientErrors( errors );
         }else {
             setClientErrors(null )
+            console.log( formData )
+            try {
+                await dispatch( otpVerify( formData ))
+                    .unwrap()
+                    .then( ( ) => {
+                        dispatch( getUser() );
+                        toast.success( "User Login Succesfully")
+                        navigate("/");
+                    })
+            } catch (error) {
+                console.log( error );
+            }
         }
     }
     return (
         <div className="flex justify-center items-center">
+            { isLoading && <Spinner/>}
             <div  className = " bg-slate-100   mt-40  rounded-sm" >
                 <form onSubmit={handleSubmit}>
                     { ! otpSent && <div>
@@ -84,6 +116,13 @@ const OptionLogin = ( ) => {
                                         />
                                         { clientError?.input && <span  className="text-sm ml-3 text-red-400 font-semibold"> {clientError?.input}</span>}
                                 </div>
+                                <div className=" mb-4 ml-2">
+                                {
+                                    serverError && serverError.map( ( ele, i ) =>{
+                                        return <li key={ i } className="text-sm font-semibold text-red-500 opacity-80"> { ele.msg }</li>
+                                    })
+                                }
+                                </div>
                                 <div className="w-20 h-auto p-1 mb-5 bg-green-400 ml-28 rounded-sm flex justify-center items-center hover:bg-green-500 hover:shadow-sm">
                                     <input 
                                         type="submit" 
@@ -92,6 +131,7 @@ const OptionLogin = ( ) => {
                                         onClick={ handleSendOTP}
                                     />
                                 </div>
+                                
                         </div>}
                         {
                             otpSent && 
@@ -114,6 +154,13 @@ const OptionLogin = ( ) => {
                                         />
                                         { clientError?.otp && <span  className="text-sm  text-red-400 font-semibold"> {clientError?.otp}</span>}
                                     </div>
+                                    <div className=" mt-2">
+                                        {
+                                            serverError && serverError.map( ( ele, i ) =>{
+                                                return <li key={ i } className="text-sm font-semibold text-red-500 opacity-80"> { ele.msg }</li>
+                                            })
+                                        }
+                                </div>
                                     <div className="w-20 h-auto p-1 bg-green-400  mt-5 mb-4 rounded-sm flex justify-center items-center hover:bg-green-500 hover:shadow-sm">
                                     <input 
                                         type="submit" 
@@ -121,7 +168,8 @@ const OptionLogin = ( ) => {
                                         className="text-sm font-semibold  text-white"
                                     />
                                 </div>
-                                </div>
+                               
+                            </div>
                         }
                 </form>
             </div>
