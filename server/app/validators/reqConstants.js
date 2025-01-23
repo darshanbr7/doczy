@@ -125,5 +125,27 @@ const role ={
         errorMessage : "Role Should be one of the following Doctor or Customer"
     }
 }
-
-export { name, email, password, phoneNumber, role, otp }
+/**
+ * Defining commonly used validation rules for the 'userId' field and assigning it to a variable for reuse.
+*/
+const userId = {
+    in : [ "query"],
+    isMongoId : {
+        errorMessage : "Id is invalid "
+    }
+}
+ 
+/**
+ * Defining commonly used validation rules for the 'token' field and assigning it to a variable for reuse.
+*/
+const token = {
+    in : [ "query"],
+    isLength : {
+        options : {
+            min : 32,
+            max : 32
+        },
+        errorMessage : "Token should be 32 degits"
+    }
+}
+export { name, email, password, phoneNumber, role, otp, userId, token }

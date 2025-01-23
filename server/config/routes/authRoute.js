@@ -7,13 +7,15 @@ import authentication from "../../app/middlewares/authentication.js";
 
 import userController from "../../app/controllers/userController.js";
 import otpController from "../../app/controllers/otpController.js";
-import { email, phoneNumber } from "../../app/validators/reqConstants.js";
+import { email, phoneNumber, userId, token } from "../../app/validators/reqConstants.js";
 const authRoute = express.Router();
 
  // Route for signUp and signIn user.
 authRoute.post( "/signUp", checkSchema( userRegisterSchema ), inputValidator, userController.signUp );
 authRoute.post ( "/signIn", checkSchema( userLoginSchema ),inputValidator, userController.signIn );
 
+//Route for Verifying user
+authRoute.put("/verify", checkSchema( { userId, token }), inputValidator,userController.verify );
 // Route for sending an SMS OTP to the user's phone number and email.
 authRoute.post ( "/phoneNumber/send-otp", checkSchema( { phoneNumber }), inputValidator,  otpController.sendSmsOtp );
 authRoute.post( "/email/send-otp", checkSchema( { email } ), inputValidator, otpController.sendEmailOtp );

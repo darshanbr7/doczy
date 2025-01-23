@@ -5,7 +5,8 @@ import OTP from "../models/otpModel.js";
 import checkCollection from "../helpers/userControllerHelpers/checkCollection.js";
 import generateOtp from "../helpers/userControllerHelpers/checkOtpCollection.js";
 import generateToken from "../helpers/userControllerHelpers/generateToken.js";
-import { OTP_EMAIL_TEMPLATE } from "../helpers/userControllerHelpers/mailTemplets.js"; 
+import { OTP_EMAIL_TEMPLATE } from "../helpers/userControllerHelpers/mailTemplets.js";
+import mailSender from "../helpers/userControllerHelpers/mailSender.js"; 
 const otpController = {}
 /**
  *This function helps to Send a SMS OTP to the user for authentication purposes.
@@ -19,6 +20,9 @@ otpController.sendSmsOtp = async ( req, res ) => {
         const user = await checkCollection( { phoneNumber : phoneNumber } );
         if( !user ) {
             return res.status( 400 ).json ( { error : [ { msg : "Phone Number is not Registered " }] });
+        }
+        if( !user.isVerified){
+            return res.status( 404 ).json( { error : [{ msg : "User is not verified! "}]});
         }
         const accountSid =  process.env.TWILIO_ACCOUNT_SID;
         const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -49,24 +53,12 @@ otpController.sendEmailOtp = async ( req, res ) => {
         if( !user ){
             return res.status( 401 ).json( { error : [{ msg : "Email is not registered "}]})
         }
-        const { otp } = await generateOtp( user._id );
-        const transporter =   nodemailer.createTransport({
-            service : "gmail",
-            auth : {
-                user : process.env.ADMIN_EMAIL,
-                pass : process.env.ADMIN_PASS
-            }
-        })
-        let mailOptions = {
-            from: process.env.ADMIN_EMAIL,
-            to: email, 
-            subject: " OTP code for Login ", 
-            html : OTP_EMAIL_TEMPLATE.replace( "{verificationCode}", otp )
-        };
-        const info = await transporter.sendMail(mailOptions)
-        if( !info ){
-            throw new Error ( "something went wrong in mail config")
+        if( !user.isVerified){
+            return res.status( 404 ).json( { error : [{ msg : "User is not verified! "}]});
         }
+        const { otp } = await generateOtp( user._id );
+        const templete =  OTP_EMAIL_TEMPLATE.replace( "{verificationCode}", otp );
+        await mailSender( email, "OTP code for Login", templete );
         res.status( 201 ).json({  message   : "OTP sent succesfully "});
     } catch (error) {
         res.status( 500 ).json({ error : [ { msg : "Something went wrong, Error while sending Email OTP! "}]});

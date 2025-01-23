@@ -3,10 +3,10 @@ import _ from  "lodash";
 import randToken from "rand-token"
 import User from "../models/userModel.js"
 import Token from "../models/tokenModel.js";
-import nodemailer from "nodemailer";
 import checkCollection from "../helpers/userControllerHelpers/checkCollection.js"
 import generateToken from "../helpers/userControllerHelpers/generateToken.js";
 import { TOKEN_EMAIL_TEMPLATE } from "../helpers/userControllerHelpers/mailTemplets.js";
+import mailSender from "../helpers/userControllerHelpers/mailSender.js";
 
 const userController = {}
 /**
@@ -28,31 +28,17 @@ userController.signUp =  async ( req, res ) => {
         const hash = await bcryptjs.hash( password, salt );
         user.password = hash
         user.role == "admin" ? user.isVerified = true : user.isVerified = false;
-        const token = randToken.generate(32);
-        await  new Token({ userId : user._id, token}).save();
-        const baseUrl = process.env.BASE_URL;
-        const url = `${baseUrl}/verify?userId=${user._id}&token=${token}`;
-        const transporter =   nodemailer.createTransport({
-            service : "gmail",
-            auth : {
-                user : process.env.ADMIN_EMAIL,
-                pass : process.env.ADMIN_PASS
-            }
-        })
-        let mailOptions = {
-            from: process.env.ADMIN_EMAIL,
-            to: email, 
-            subject: " Verify your account ", 
-            html : TOKEN_EMAIL_TEMPLATE.replace( "{token}", url )
-        };
-        const info = await transporter.sendMail(mailOptions)
-        if( !info ){
-            throw new Error ( "something went wrong in mail config")
+        if( user.role !== "admin"){
+            const token = randToken.generate(32);
+            await  new Token({ userId : user._id, token}).save();
+            const baseUrl = process.env.BASE_URL;
+            const url = `${baseUrl}/verify?userId=${user._id}&token=${token}`;
+            const templet = TOKEN_EMAIL_TEMPLATE.replace( "{token}", url );
+            await mailSender( user.email, " Verify your account ", templet );
         }
         await user.save();
-        return res.status( 201 ).json({  message   : "Mail sent succesfully "});
-        /* const body  = _.pick( user, [ "_id", "name", "email", "phoneNumber", "role", "createdAt"] );
-        return res.status( 201 ). json( body ); */
+        const body  = _.pick( user, [ "_id", "name", "email", "phoneNumber", "role", "createdAt"] );
+        return res.status( 201 ). json( body );
     } catch (error) {
         console.log( error )
         return res.status( 500 ). json ( { error : [{ msg :  "Something went wrong, while signUp!"}] })
@@ -74,16 +60,45 @@ userController.signIn = async ( req, res ) => {
         }
         const  user = await checkCollection ( phoneNumber ? { phoneNumber }: {email} );
         if( ! user ) {
-            return res.status( 400 ).json( { error : [{ msg : "Email / Phone Number is not registered "}]});
+            return res.status( 404 ).json( { error : [{ msg : "Email / Phone Number is not registered "}]});
+        }
+        if( !user.isVerified){
+            return res.status( 404 ).json( { error : [{ msg : "User is not verified! "}]});
         }
         const isValid =  await bcryptjs.compare( password , user.password );
         if( !isValid ){
-            return res.status( 400 ).json({ error : [{ msg : "Invalid Email / Password "}]} );
+            return res.status( 403 ).json({ error : [{ msg : "Invalid Email / Password "}]} );
         }
         const token = await generateToken ( user );
         return res.json( { token : `Bearer ${ token }`} );
     } catch (error) {
         return res.status( 500 ).json( { error : [{ msg : "Something went wrong! while signIn"}]})
+    }
+}
+
+/**
+ * This function handles user verification.
+ * @param {Object} req - The request object passed from nodejs, with request data
+ * @param {Object} res - The response object used to send back errors or success responses.
+ * @returns {message } - A JSON response containing status of the verification operation.
+ */
+userController.verify = async ( req, res ) => {
+    try {
+        const { userId, token } = _.pick(req.query, [ "userId", "token"])
+        const { isVerified } = _.pick( req.body, [ "isVerified"]);
+        const  user = await checkCollection({_id : userId } ) ;
+        if( ! user ) {
+            return res.status( 404 ).json( { error : [{ msg : "User is not registered "}]});
+        }
+        const tokenRecord = await Token.findOne({ userId, token });
+        if( ! tokenRecord ) {
+            return res.status( 404 ).json( { error : [{ msg : "Token is invalid "}]});
+        }
+        await User.findByIdAndUpdate(userId, { isVerified }, { new : true, runValidators : true })
+        await Token.findOneAndDelete({userId, token });
+        res.json( { success : true, message : "user verified succesfully"})
+    } catch (error) {
+        res.status( 500 ). json( { error : [ { msg : "Something went wrong! while verifying account "}]})
     }
 }
 
