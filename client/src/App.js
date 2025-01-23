@@ -1,7 +1,7 @@
 import './App.css';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from './slices/authSlice';
 import PrivateRoute from './pages/PrivateRoute';
 import Dashboard from './pages/Dashboard';
@@ -14,17 +14,23 @@ import OptionLogin from './pages/OptionLogin';
 import Profile  from "./pages/Profile";
 import VerifyAccount from './pages/VerifyAccount';
 import Details from './pages/Details';
+import Appointment from "./pages/Doctors"
+import Spinner from './pages/Spinner';
 
 function App() {
   const location = useLocation();
   const dispatch = useDispatch()
+  const { userInfo } = useSelector( state => state.auth)
   const showFooter = [ "/", "/login", "/register"];
-  useEffect(()=>{
   const token = localStorage.getItem("token");
+  useEffect(()=>{
     if( token ){
       dispatch( getUser() )
     }
-  },[ ])
+  },[ token ])
+  if(  token && !userInfo ){
+    return <Spinner/>
+  } 
   return (
     <div className="flex flex-col ">
       <Navbar />
@@ -39,6 +45,7 @@ function App() {
           <Route path='/profile' element = { <PrivateRoute> <Profile/></PrivateRoute>} />
           <Route path='/dashboard' element = { <PrivateRoute> <Dashboard/> </PrivateRoute>} />
           <Route path='/details' element =  { <PrivateRoute permittedRoles = {[ "doctor"]}> <Details/></PrivateRoute>}/>
+          <Route path='/find-doctors' element =  { <PrivateRoute permittedRoles = {[ "customer"]}> <Appointment/></PrivateRoute>}/>
         </Routes>
       </div>
       {showFooter.includes(location.pathname) && <Footer />}
