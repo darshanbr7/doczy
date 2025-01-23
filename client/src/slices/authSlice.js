@@ -17,7 +17,7 @@ export const userRegister = createAsyncThunk( "auth/userRegister",  async ( form
 /**
  * This function is used to verify the user account
  */
-export const verifyAccount = createAsyncThunk ( "post/verifyAccount",  async ( { userId, token, isChecked}, { rejectWithValue} ) => {
+export const verifyAccount = createAsyncThunk ( "put/verifyAccount",  async ( { userId, token, isChecked}, { rejectWithValue} ) => {
     try {
         const response = await axiosInstance.put(`/auth/verify?userId=${userId}&token=${token}`, {isVerified: isChecked});
         return response.data;

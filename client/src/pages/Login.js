@@ -52,9 +52,10 @@ const Login = ( ) => {
                 };
             try {
                 await dispatch( userLogin( formData )).unwrap().then( () => {
-                    dispatch( getUser() )
-                    toast.success("User Login Succesfully", { autoClose : 2000 })
-                    navigate("/")
+                    dispatch( getUser() );
+                    toast.success("User Login Succesfully", { autoClose : 2000 });
+                    const redirectTo = location.state?.from || "/"
+                    navigate(redirectTo);
                 })
             } catch (error) {
                 console.log( error )
