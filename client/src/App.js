@@ -3,6 +3,8 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from './slices/authSlice';
+import { getProfile } from './slices/profileSlice';
+
 import PrivateRoute from './pages/PrivateRoute';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -26,6 +28,7 @@ function App() {
   useEffect(()=>{
     if( token ){
       dispatch( getUser() )
+      dispatch( getProfile() )
     }
   },[ token ])
   if(  token && !userInfo ){

@@ -7,6 +7,7 @@ const profileSchema = new Schema({
     },
     profilePic : String,
     gender : {
+        type: String,
         enum : [ "male", "female", "other" ]
     } ,
     dob : Date
