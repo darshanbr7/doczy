@@ -110,7 +110,7 @@ userController.verify = async ( req, res ) => {
  */
 userController.account =  async ( req, res ) => {
     try {
-        const body = _.pick(req.currentUser, ["userId", "role", "name", "isVerified"] )
+        const body = _.pick(req.currentUser, ["userId", "role", "name", "isVerified", "email" , "phoneNumber" ] )
         res.json( body );
     } catch (error) {
         res.status( 500 ).json ( { error :[{ msg : "Something went wrong while fetching account details!"}]})

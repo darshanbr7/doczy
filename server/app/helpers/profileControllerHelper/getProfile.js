@@ -5,7 +5,7 @@ import Profile from "../../models/profileModel.js";
  * 
  * @param {Object} user - The user object used to search for the profile. It contains fields that are matched against the database.
  */
-const getProfile = async (user) => {
+const getProfile = async ( user ) => {
     try {
         const profile = await Profile.findOne( user );
         return profile;

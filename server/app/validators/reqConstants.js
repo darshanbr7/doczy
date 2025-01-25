@@ -1,3 +1,4 @@
+
 /**
  * Defining commonly used Validation rules for an email field and assiging to a variable for further use.
 */
@@ -148,4 +149,46 @@ const token = {
         errorMessage : "Token should be 32 degits"
     }
 }
-export { name, email, password, phoneNumber, role, otp, userId, token }
+
+/**
+ * Defining commonly used validation rules for the 'DOB' field and assigning it to a variable for reuse.
+*/
+const dob = {
+    in : [ "body" ],
+    exists : {
+        errorMessage : "Date of Birth field is required"
+    },
+    notEmpty :{
+        errorMessage : "DOB filed should not be empty"
+    },
+    trim : true,
+    custom : {
+        options : ( value ) => {
+            if( !(/^\d{4}-\d{2}-\d{2}$/.test( value )) ) {
+                throw new Error ( "Date Of Birth shoould be in the yyyy/MM/dd format");
+            } else if(new Date() < new Date( value ) ){
+                throw new Error ( "DOB con't be fucture" );
+            }
+            return true
+        }
+    }
+}
+
+/**
+ * Defining commonly used validation rules for the 'Gender' field and assigning it to a variable for reuse.
+*/
+const gender = {
+    in : [ "body" ],
+    exists : {
+        errorMessage : "Date of Birth field is required"
+    },
+    notEmpty :{
+        errorMessage : "DOB filed should not be empty"
+    },
+    trim : true,
+    isIn : {/*  this property check the Gender */
+        options: [ [ "male", "female", "other" ] ],
+        errorMessage : "Genedr Should be one of the following Male, Female or other"
+    }
+}
+export { name, email, password, phoneNumber, role, otp, userId, token, dob, gender }

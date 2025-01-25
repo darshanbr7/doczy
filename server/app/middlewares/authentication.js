@@ -23,7 +23,9 @@ const authentication = ( req, res, next ) => {
             userId : isValid.userId,
             role : isValid.role,
             name : isValid.name,
-            isVerified : isValid.isVerified
+            isVerified : isValid.isVerified,
+            email : isValid.email,
+            phoneNumber : isValid.phoneNumber
         }
         req.currentUser = currentUser;
        return next();

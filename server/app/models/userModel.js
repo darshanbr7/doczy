@@ -13,10 +13,6 @@ const userSchema = new Schema({
         enum :[ "admin", "doctor", "customer" ],
         required: true 
     },
-    isSubscriber : {
-        type : Boolean,
-        default: false
-    },
     isVerified : {
         type : Boolean,
         default : false

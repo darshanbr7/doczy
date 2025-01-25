@@ -5,11 +5,15 @@ const profileSchema = new Schema({
         type : Schema.Types.ObjectId,
         ref : "User",
     },
-    profilePic : String,
+    avatar : String ,
     gender : {
         type: String,
         enum : [ "male", "female", "other" ]
     } ,
+    isSubscriber : {
+        type : Boolean,
+        default: false
+    },
     dob : Date
 }, { timestamps : true } );
 const Profile = model ( "Profile", profileSchema );

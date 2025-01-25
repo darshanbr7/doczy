@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import bodyParser from "body-parser";
 import authRoutes from "./config/routes/authRoute.js";
 import profileRoute from "./config/routes/profileRoute.js";
 import dbConnect from "./config/db/dbConnection.js";
@@ -13,6 +14,8 @@ const port  = process.env.PORT
 
 app.use( cors() );
 app.use( express.json() );
+/* app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true ,limit : "5mb"})); */
 // Register authentication-related routes under "/api/auth"
 app.use( "/api/auth", authRoutes );
 // Profile related routes under "/api/profile"

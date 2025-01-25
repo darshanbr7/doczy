@@ -11,6 +11,8 @@ const generateToken =  async ( user ) => {
             userId : user._id,
             role : user.role,
             name : user.name,
+            email : user.email,
+            phoneNumber : user.phoneNumber,
             isVerified : user.isVerified
         }
         const token = await jwt.sign(  tokenData, JWT_SECRET, { expiresIn : JWT_EXPIRE_IN } );
