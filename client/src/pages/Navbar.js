@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import {  useSelector } from "react-redux"
 import { ToastContainer } from "react-toastify"
 import { CgProfile } from "react-icons/cg";
 const Navbar = ( ) => {
-    const dispatch = useDispatch()
     const { isLoggedIn }  = useSelector( state => state.auth )
     return (
         <nav className=" bg-green-200 p-3 shadow-sm ">

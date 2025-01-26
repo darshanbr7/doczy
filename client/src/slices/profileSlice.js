@@ -20,7 +20,8 @@ export const uploadProfile = createAsyncThunk("post/uploadProfile", async ( form
                 Authorization : localStorage.getItem("token"),
             }
         } )
-        return response.data;
+        console.log( response.data )
+        return response.data;   
     } catch (error) {
         console.log(  error );
         return rejectWithValue( error?.response?.data?.error );
@@ -29,8 +30,14 @@ export const uploadProfile = createAsyncThunk("post/uploadProfile", async ( form
 
 export const updateProfile = createAsyncThunk( "put/updateProfile", async ( formData, { rejectWithValue }) =>{
     try {
-        
+        const response = await axiosInstance.put("/profile/user", formData ,{
+            headers: {
+                Authorization : localStorage.getItem("token"),
+            }
+        } )
+        return response.data;
     } catch (error) {
+        console.log( "errorp", error)
         return rejectWithValue( error?.response?.data?.error );
     }
 })
@@ -88,6 +95,25 @@ const profileSlice = createSlice( {
             state.serverError = action.payload;
             state.editId = null;
             state.userDetail = null;
+            state.isLoading = false 
+        })
+
+        //builders for update the profile
+        builders.addCase( updateProfile.pending, (  state ) => {
+            state.serverError = null;
+            state.editId = null ;
+            state.userDetail = null;
+            state.isLoading = true 
+        })
+        builders.addCase( updateProfile.fulfilled, (  state, action  ) => {
+            state.serverError = null;
+            state.editId = null;
+            state.userDetail = action.payload;  
+            state.isLoading = false 
+        })
+        builders.addCase( updateProfile.rejected, (  state, action  ) => {
+            state.serverError = action.payload;
+            state.editId = null;
             state.isLoading = false 
         })
     }

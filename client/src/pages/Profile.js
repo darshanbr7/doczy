@@ -1,18 +1,19 @@
 import { useSelector, useDispatch } from "react-redux"
 import { LiaUserEditSolid } from "react-icons/lia";
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify";
 import { format } from "date-fns"
 import Spinner from "./Spinner"
 import SideNavbar from "./SideNavbar"
-import { uploadProfile } from "../slices/profileSlice";
-import { setEditing } from "../slices/profileSlice";
-import { toast } from "react-toastify";
-
+import { uploadProfile, updateProfile } from "../slices/profileSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { userInfo } = useSelector(state => state.auth);
-  const { userDetail, isLoading } = useSelector(state => state.profile)
+  const { userDetail, isLoading, serverError } = useSelector(state => state.profile);
+  console.log( "user", userDetail );
   const [formData, setFormData] = useState({
     avatar: null,
     gender: "",
@@ -50,6 +51,8 @@ const Profile = () => {
   const validateForm = ( ) => {
     if( formData.dob.trim().length === 0 ) {
       errors.dob = "Date of Birth con't be empty"
+    } else if( new Date( formData.dob ) > new Date()) {
+      errors.dob = "Date of Birth con't be future"
     }
     if( formData.gender.trim().length === 0 ){
       errors.gender = "Gender Sould be any of one"
@@ -67,7 +70,14 @@ const Profile = () => {
         uploadData.append("avatar", formData.avatar);
         uploadData.append("gender", formData.gender);
         uploadData.append("dob", formData.dob);
-        dispatch( uploadProfile( uploadData ) )
+        console.log( ! userDetail );
+        if( !userDetail ){
+        dispatch( uploadProfile( uploadData ) ) // post operation
+        } else if( !userDetail.isSubscriber ){
+          toast.warning( "User needs a subscription to Edit the Profile")
+        } else if( userDetail && userDetail.isSubscriber ){
+          dispatch( updateProfile( uploadData ) );
+        }
       } catch (error) {
         console.log( error )
       }
@@ -168,15 +178,59 @@ const Profile = () => {
                 }
               </div>
             </div>
+            <div >  
+            { 
+              serverError && serverError.map( ( ele, i ) =>{
+                return <li key={ i } className="text-sm mt-2 font-semibold text-red-500 opacity-60"> { ele.msg }</li>
+              })
+            }
+            </div>
             <div className=" mt-4 flex justify-center items-center ">
-             
+             {
+              userDetail ? <> 
+                <input type = "submit"
+                       value = "Edit"
+                       className=" p-1 bg-green-400 w-20 rounded-sm cursor-pointer text-white font-semibold  hover:bg-green-600"
+                />
+              </> : <> 
+                <input type = "submit"
+                       value = "Upload"
+                       className=" p-1 bg-green-400 w-20 rounded-sm cursor-pointer text-white font-semibold  hover:bg-green-600"
+                />
+              </>
+             }
             </div>
           </form>
           </div>
         </div>
       </div>
-      <div className="w-1/2">
-        <p className="text-xl">Subscription Section</p>
+      <div className="w-1/2 flex flex-col justify-center items-center">
+        {
+          (!userDetail?.isSubscriber) && <div className=" bg-gray-400 p-10 text-white font-semibold opacity-80 rounded-sm">
+          <h2 className="text-xl mb-4"> Benifits of having Subscription</h2>
+          <li> Discount on the  consultation </li>
+          <li> Early acess to the new feactures </li>
+          <li> Health Reminders </li>
+          <li> There is a acess to Records & Reliots </li>
+          <div className="flex justify-center items-center mt-9">
+           <button className="p-2 bg-blue-600 rounded-sm w-32 hover:bg-blue-700 "> Buy Now</button>
+          </div>
+         </div>
+        }
+        {
+          userDetail?.isSubscriber && <div className=" bg-gray-400 p-10 text-white font-semibold opacity-80 rounded-sm">
+          <h2 className="text-xl mb-4"> You Have !</h2>
+          <li> Discount on the  consultation </li>
+          <li> Early acess to the new feactures </li>
+          <li> Health Reminders </li>
+          <li> There is a acess to Records & Reliots </li>
+          <div className="flex justify-center items-center mt-9">
+           <button className="p-2 bg-blue-600 rounded-sm  hover:bg-blue-700 text-sm"
+           onClick={ ( ) =>  navigate("/find-doctors")}
+           > Book Appointment </button>
+          </div>
+     </div>
+        }
       </div>
     </div>
 

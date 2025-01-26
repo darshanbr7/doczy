@@ -67,7 +67,7 @@ profileController.updateProfile = async (req, res) => {
       result = await uploadMedia(file);
     }
     const profilePic = result?.secure_url ? result?.secure_url : profile.profilePic
-    const updatedProfile = await Profile.findOneAndUpdate({ userId }, { profilePic, dob, gender })
+    const updatedProfile = await Profile.findOneAndUpdate({ userId }, { profilePic, dob, gender }, { new : true, runValidators : true } );
     return res.json(updatedProfile)
   } catch (error) {
     res.status(500).json({ error: [{ msg: "Something went wrong while Updating profile" }] })

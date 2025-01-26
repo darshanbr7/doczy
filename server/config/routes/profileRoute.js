@@ -12,5 +12,5 @@ profileRoute.post("/user",  authentication,  upload.single("avatar"),checkSchema
 // Route for the getting user Profile
 profileRoute.get("/user", authentication,profileController.getProfile  );
 
-profileRoute.put( "/user", authentication, upload.single("avatar"), checkSchema( { gender }), inputValidator, profileController.updateProfile );
+profileRoute.put( "/user", authentication, upload.single("avatar"), checkSchema( { gender, dob }), inputValidator, profileController.updateProfile );
 export default profileRoute;

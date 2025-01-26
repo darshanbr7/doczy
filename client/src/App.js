@@ -18,6 +18,7 @@ import VerifyAccount from './pages/VerifyAccount';
 import Details from './pages/Details';
 import Appointment from "./pages/Doctors"
 import Spinner from './pages/Spinner';
+import { getSpecializations } from './slices/doctorDetailsSlice';
 
 function App() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function App() {
     if( token ){
       dispatch( getUser() )
       dispatch( getProfile() )
+      dispatch( getSpecializations() )
     }
   },[ token ])
   if(  token && !userInfo ){

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux" 
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import Spinner from "./Spinner";
 const PrivateRoute = ( props ) => {
     const { userInfo, isLoggedIn } = useSelector( state =>  state.auth );
     const navigate = useNavigate();
