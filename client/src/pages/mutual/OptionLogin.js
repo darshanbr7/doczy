@@ -3,7 +3,7 @@ import { useState } from "react";
 import { isNumeric, isEmail } from "validator";
 import { useSelector, useDispatch } from "react-redux"
 import Spinner from "./Spinner";
-import { otherLoginOptions, otpVerify, getUser } from "../slices/authSlice"
+import { otherLoginOptions, otpVerify, getUser } from "../../slices/authSlice"
 
 const OptionLogin = () => {
     const location = useLocation();

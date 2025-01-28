@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { isEmail, isNumeric } from "validator";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { userLogin, getUser } from "../slices/authSlice";
+import { userLogin, getUser } from "../../slices/authSlice";
 import Spinner from "./Spinner";
-import InfoPage from "../images/InfoPage.jpg"
+import InfoPage from "../../images/InfoPage.jpg"
 const Login = () => {
     const location = useLocation();
     const dispatch = useDispatch();

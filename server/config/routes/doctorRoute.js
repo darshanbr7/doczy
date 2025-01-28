@@ -18,4 +18,6 @@ doctorRoute.get( "/detail", authentication, authorization( [ "doctor" ] ),docInf
 doctorRoute.put( "/update", authentication, authorization( [ "doctor" ] ), upload.single( "licenceImage"),
  checkSchema( doctorInfoSchemaValidator), inputValidator, docInfoController.update );
 
+ doctorRoute.get( "/list", authentication, authorization( [ "admin" ] ),docInfoController.list );
+
 export default doctorRoute;

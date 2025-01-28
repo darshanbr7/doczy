@@ -37,7 +37,6 @@ export const createDoctorDetails = createAsyncThunk ( "post/createDoctorDetails"
         toast.success( "Details created succesfully")
         return response.data;
     } catch (error) {
-        console.log( "err create", error )
         return rejectWithValue( error?.response?.data?.error );  
     }
 })
@@ -65,7 +64,6 @@ export const updateDoctorDetails = createAsyncThunk ( "post/updateDoctorDetails"
         toast.success( "Details updated succesfully")
         return response.data;
     } catch (error) {
-        console.log( "err update", error )
         return rejectWithValue( error?.response?.data?.error );  
     }
 })
@@ -100,12 +98,11 @@ const detailSlice = createSlice( {
             state.isLoading = true;
         })
         builders.addCase( createSpecializations.fulfilled, ( state, action ) => {
-            state.details.push( action.payload );
-            state.isLoading = false;
-            state.serverError = null
+            state.specializations.push( action.payload );
+            state.isLoading = false
+            state.serverError = null;
         })
         builders.addCase( createSpecializations.rejected, ( state, action ) => {
-            state.specializations = [];
             state.isLoading = false;
             state.serverError = action.payload
         })

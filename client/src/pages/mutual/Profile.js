@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { format } from "date-fns"
 import Spinner from "./Spinner"
 import SideNavbar from "./SideNavbar"
-import { uploadProfile, updateProfile } from "../slices/profileSlice";
+import { uploadProfile, updateProfile } from "../../slices/profileSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -85,7 +85,7 @@ const Profile = () => {
   return (
     <div className="flex max-w-screen-lg">
       {isLoading && <Spinner />}
-      <div className="w-auto">
+      <div className="w-auto p-4">
         <SideNavbar />
       </div>
       <div className="flex p-4 w-1/2 justify-center items-center bg-white flex-grow">

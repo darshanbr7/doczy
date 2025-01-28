@@ -4,21 +4,28 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from './slices/authSlice';
 import { getProfile } from './slices/profileSlice';
-
-import PrivateRoute from './pages/PrivateRoute';
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
-import Home from './pages/Home';
-import Navbar from './pages/Navbar';
-import Register from './pages/Register';
-import Footer from './pages/Footer';
-import OptionLogin from './pages/OptionLogin';
-import Profile from "./pages/Profile";
-import VerifyAccount from './pages/VerifyAccount';
-import Details from './pages/Details';
-import Appointment from "./pages/Doctors"
-import Spinner from './pages/Spinner';
 import { getSpecializations } from './slices/doctorDetailsSlice';
+
+
+import PrivateRoute from './pages/mutual/PrivateRoute';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/mutual/Login';
+
+import Home from './pages/mutual/Home';
+import Navbar from './pages/mutual/Navbar';
+import Register from './pages/mutual/Register';
+import Footer from './pages/mutual/Footer';
+import OptionLogin from './pages/mutual/OptionLogin';
+import Profile from "./pages/mutual/Profile";
+import VerifyAccount from './pages/mutual/VerifyAccount';
+import Spinner from './pages/mutual/Spinner';
+
+import VerifyDoctors from './pages/admin/VerifyDoctors';
+
+import Details from "./pages/doctor/Details";
+
+import Appointment from "./pages/customer/Doctors"
+
 
 function App() {
   const location = useLocation();
@@ -52,6 +59,7 @@ function App() {
           <Route path='/dashboard' element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <Appointment /></PrivateRoute>} />
+          <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
         </Routes>
       </div>
       {showFooter.includes(location.pathname) && <Footer />}

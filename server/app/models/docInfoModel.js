@@ -5,6 +5,10 @@ const docInfoSchema = new Schema( {
         type:Schema.Types.ObjectId,
         ref : "User"
     },
+    profileId : {
+        type:Schema.Types.ObjectId,
+        ref : "Profile"
+    },
     specialization : [ String ],
     licenceNumber : String,
     licenceExpiryDate : Date,

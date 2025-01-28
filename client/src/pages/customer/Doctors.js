@@ -1,4 +1,4 @@
-import SideNavbar from "./SideNavbar";
+import SideNavbar from "../mutual/SideNavbar";
 const Doctors = ( ) => {
 return(
         <div className="flex max-w-screen-lg">

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import InfoPage from "../images/InfoPage.jpg"
-import { userRegister } from "../slices/authSlice";
+import InfoPage from "../../images/InfoPage.jpg"
+import { userRegister } from "../../slices/authSlice";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { isEmail, isNumeric, isStrongPassword } from "validator";
 import Spinner from "./Spinner";

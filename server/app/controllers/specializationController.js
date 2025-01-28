@@ -14,10 +14,8 @@ import Specialization from "../models/specializationModel.js";
  */
 specializationController.create = async( req, res ) => {
     try {
-        console.log("hello ")
         const { name } = _.pick( req.body, [ "name" ] );
-        const { userId } = _.pick( req.currentUser, ["userId"]);
-        const specialization = await new Specialization( { userId, name } ).save();
+        const specialization = await new Specialization( {  name } ).save();
         return res.json(  specialization );
     } catch (error) {
         return res.status( 500 ).json( { error : [ { msg : "something went wrong while creating specialization "} ] } );

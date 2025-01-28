@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import InfoPage from "../images/InfoPage.jpg"
+import InfoPage from "../../images/InfoPage.jpg"
 import Spinner from "./Spinner";
-import { verifyAccount } from "../slices/authSlice";
+import { verifyAccount } from "../../slices/authSlice";
 /**
  * Creating Custom hook to fetch the values from query
  * @returns  - loaction.serch  value 
