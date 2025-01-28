@@ -1,12 +1,13 @@
 import {createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
 /**
  * This function is used to Register the user
  */
 export const userRegister = createAsyncThunk( "auth/userRegister",  async ( formData, { rejectWithValue } ) => {
     try {
-        const response = await axiosInstance.post("/auth/signUp", formData);
-        console.log( response.data );
+        await axiosInstance.post("/auth/signUp", formData);
+        toast.success( "User Rigistered successfully");
         return true;
     } catch (error) {
         console.log( error )
@@ -20,6 +21,7 @@ export const userRegister = createAsyncThunk( "auth/userRegister",  async ( form
 export const verifyAccount = createAsyncThunk ( "put/verifyAccount",  async ( { userId, token, isChecked}, { rejectWithValue} ) => {
     try {
         const response = await axiosInstance.put(`/auth/verify?userId=${userId}&token=${token}`, {isVerified: isChecked});
+        toast.success("User succesfully verified");
         return response.data;
     } catch (error) {
        return rejectWithValue( error?.response?.data?.error );
@@ -32,6 +34,7 @@ export const userLogin = createAsyncThunk("user/userLogin", async ( formData, { 
     try {
         const response =  await axiosInstance.post("/auth/signIn", formData );
         localStorage.setItem("token", response.data.token );
+        toast.success( "User Login successfully");
         return response.data;
     } catch (error) {
         console.log("error", error ) 
@@ -45,6 +48,7 @@ export const userLogin = createAsyncThunk("user/userLogin", async ( formData, { 
  export const otherLoginOptions = createAsyncThunk( "post/otherLoginOptions", async ( {inputData, state}, { rejectWithValue } ) => {
     try {
        const response = await axiosInstance.post(`/auth/${state}/send-otp`, inputData );
+       toast.success( "Otp Sent successfully");
        return response.data; 
     } catch (error) {
         return  rejectWithValue( error?.response?.data?.error );
@@ -56,8 +60,8 @@ export const userLogin = createAsyncThunk("user/userLogin", async ( formData, { 
 export const otpVerify = createAsyncThunk( "post/otpVerify", async ( formData, { rejectWithValue } ) => {
     try {
        const response = await axiosInstance.post("/auth/verify-otp", formData );
-       console.log( response.data );
        localStorage.setItem("token", response.data.token );
+       toast.success( "User Login successfully");
        return response.data;
     } catch (error) {
         return  rejectWithValue( error?.response?.data?.error );
@@ -96,9 +100,6 @@ const authSlice = createSlice( {
         logout : ( state ) => {
             state.isLoggedIn = false;
             state.user = null ;
-        },
-        setOtpSent : ( state, action ) => {
-            state.otpSent = action.payload;
         }
     },
     extraReducers : ( builders ) => {
@@ -147,6 +148,7 @@ const authSlice = createSlice( {
         })
         builders.addCase( otherLoginOptions.fulfilled, ( state, action ) => {
             state.isLoading = false;
+            state.otpSent = true;
             state.serverError = null;
         })
         builders.addCase( otherLoginOptions.rejected, ( state, action ) => {
@@ -158,6 +160,7 @@ const authSlice = createSlice( {
         })
         builders.addCase( otpVerify.fulfilled, ( state, action ) => {
             state.isLoading = false;
+            state.otpSent = false;
             state.serverError = null;
         })
         builders.addCase( otpVerify.rejected, ( state, action ) => {
@@ -184,5 +187,5 @@ const authSlice = createSlice( {
 
     }
 })
-export const {  setLoader, logout, setOtpSent  } = authSlice.actions;
+export const {  setLoader, logout  } = authSlice.actions;
 export default authSlice.reducer;

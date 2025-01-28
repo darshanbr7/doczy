@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import InfoPage from "../images/InfoPage.jpg"
 import Spinner from "./Spinner";
 import { verifyAccount } from "../slices/authSlice";
-import { toast } from "react-toastify";
 /**
  * Creating Custom hook to fetch the values from query
  * @returns  - loaction.serch  value 
@@ -34,15 +33,9 @@ const VerifyAccount = ( ) => {
             setClientError( errors );
         } else {
             setClientError( null )
-            try {
-              await dispatch( verifyAccount( { userId, token, isChecked }))
-                    .unwrap()
-                    .then(() => {
-                        toast.success("User succesfully verified");
-                        navigate("/login")
-                    })  
-            } catch (error) {
-              console.log( error )  
+            const actionResult = await dispatch( verifyAccount( { userId, token, isChecked }))
+            if(actionResult.type === verifyAccount.fulfilled.type){
+                navigate("/login");
             }
         }
     }

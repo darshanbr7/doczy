@@ -13,7 +13,6 @@ const Profile = () => {
   const navigate = useNavigate();
   const { userInfo } = useSelector(state => state.auth);
   const { userDetail, isLoading, serverError } = useSelector(state => state.profile);
-  console.log( "user", userDetail );
   const [formData, setFormData] = useState({
     avatar: null,
     gender: "",

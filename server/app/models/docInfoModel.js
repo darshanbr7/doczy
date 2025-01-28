@@ -5,11 +5,12 @@ const docInfoSchema = new Schema( {
         type:Schema.Types.ObjectId,
         ref : "User"
     },
-    specialization : Array,
+    specialization : [ String ],
     licenceNumber : String,
-    LicenceExpiryDate : Date,
-    LicennceImage : String,
+    licenceExpiryDate : Date,
+    licenceImage : String,
     yearsOfExperience : Number,
+    consultationFee : Number,
     address : {
         buildingNo: String,
         street: String,

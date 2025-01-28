@@ -14,6 +14,7 @@ import Specialization from "../models/specializationModel.js";
  */
 specializationController.create = async( req, res ) => {
     try {
+        console.log("hello ")
         const { name } = _.pick( req.body, [ "name" ] );
         const { userId } = _.pick( req.currentUser, ["userId"]);
         const specialization = await new Specialization( { userId, name } ).save();

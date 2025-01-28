@@ -9,9 +9,10 @@ import inputValidator from "../../app/helpers/inputValidator.js";
 const specializationRoute = express.Router();
 
 // Route used to create the Specialization
+
 specializationRoute.post("/create", authentication, authorization(["doctor", "admin" ] ), checkSchema( { name } ), inputValidator,specializationController.create );
 
 // Route used to the list of specialization
-specializationRoute.get("/list", authentication, authorization(["doctor", "admin" ] ), specializationController.list );
+specializationRoute.get("/list", authentication,  specializationController.list );
 
 export default specializationRoute;

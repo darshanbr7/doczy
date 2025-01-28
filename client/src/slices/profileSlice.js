@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
 export const getProfile = createAsyncThunk( "get/getProfile",  async( _, { rejectWithValue } ) => {
     try {
         const response = await axiosInstance.get("/profile/user",{
@@ -20,7 +21,7 @@ export const uploadProfile = createAsyncThunk("post/uploadProfile", async ( form
                 Authorization : localStorage.getItem("token"),
             }
         } )
-        console.log( response.data )
+        toast.success( "Profile uploded successfully")
         return response.data;   
     } catch (error) {
         console.log(  error );
@@ -35,6 +36,7 @@ export const updateProfile = createAsyncThunk( "put/updateProfile", async ( form
                 Authorization : localStorage.getItem("token"),
             }
         } )
+        toast.success( "Profile updated successfully")
         return response.data;
     } catch (error) {
         console.log( "errorp", error)
