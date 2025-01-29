@@ -9,7 +9,7 @@ const Footer  = ( ) => {
         return "  cursor-pointer hover:underline hover:border-white"
     }
     return (
-        <div className="h-auto bg-blue-600   overflow-y-hidden" >
+        <div className="h-auto bg-gradient-to-r from-blue-600 to-purple-400 overflow-y-hidden" >
             <div className=" flex h-auto  ">
                 <div className="w-1/5  ml-10   font-semibold mt-4 text-white ">
                     <p className= { `${ onHover }  mb-2`} > Doczy</p>

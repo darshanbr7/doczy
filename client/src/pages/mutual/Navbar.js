@@ -5,7 +5,7 @@ import { CgProfile } from "react-icons/cg";
 const Navbar = ( ) => {
     const { isLoggedIn }  = useSelector( state => state.auth )
     return (
-        <nav className=" bg-green-200 p-3 shadow-sm ">
+        <nav className=" p-3 shadow-sm bg-gradient-to-r from-green-500 to-green-200 ">
              <div className="max-w-screen-xl mx-auto flex items-center justify-between">
                 <div className="space-x-4 ml-8">
                     <span className="text-blue-700 font-extrabold text-2xl flex items-center tracking-wide ">

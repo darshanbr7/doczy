@@ -27,12 +27,8 @@ const Details = () => {
             country: "",
             pincode: ""
         },
-    })
-
+    })  
     const [specialization, setSpecialization] = useState([]);
-    useEffect(() => {
-        dispatch(getDoctorDetails());
-    }, [])
     useEffect(() => {
         if (details) {
             setFormData({
@@ -69,7 +65,6 @@ const Details = () => {
     }
     // function used to create the new Specialization 
     const handleCreate = async (newSpecialization) => {
-        console.log("new ", newSpecialization);
         const exists = options.some(option => option.value.toLowerCase() === newSpecialization.toLowerCase());
         if (!exists) {
             const newSpec = {
@@ -77,6 +72,7 @@ const Details = () => {
             };
             const newOption = { value: newSpecialization, label: newSpecialization };
             options = [...options, newOption];
+            setSpecialization([...specialization, newOption ] );
             await dispatch(createSpecializations(newSpec))
         }
     }
@@ -133,7 +129,6 @@ const Details = () => {
             errors.pincode = "Pincodes are only 6 digits"
         }
     }
-    console.log(details);
     const handleSubmit = (e) => {
         e.preventDefault()
         formValidate()

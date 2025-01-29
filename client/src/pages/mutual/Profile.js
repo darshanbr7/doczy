@@ -7,6 +7,7 @@ import { format } from "date-fns"
 import Spinner from "./Spinner"
 import SideNavbar from "./SideNavbar"
 import { uploadProfile, updateProfile } from "../../slices/profileSlice";
+import { getDoctorDetails } from "../../slices/doctorDetailsSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,9 @@ const Profile = () => {
         file: null,
         isSubscriber : userDetail?.isSubscriber || false 
       })
+    }
+    if( userInfo?.role ==="doctor" ){
+      dispatch( getDoctorDetails() )
     }
   }, [userDetail])
 

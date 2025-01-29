@@ -1,4 +1,4 @@
-import { specialization,licenceNumber, licenceExpiryDate,yearsOfExperience , buildingNo, street, city, state, country, pincode, consultationFee } from "./reqConstants.js";
+import { specialization,licenceNumber, licenceExpiryDate,yearsOfExperience , buildingNo, street, city, state, country, pincode, consultationFee } from "./doctorConstants.js";
 const doctorInfoSchemaValidator = {
     specialization ,
     licenceNumber ,

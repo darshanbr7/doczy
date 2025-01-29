@@ -5,6 +5,7 @@ import authentication from "../../app/middlewares/authentication.js";
 import authorization from "../../app/middlewares/authorization.js";
 import inputValidator from "../../app/helpers/inputValidator.js"
 import doctorInfoSchemaValidator from "../../app/validators/doctorInfoValidator.js"
+import { userId } from "../../app/validators/queryConstants.js";
 import upload from "../multer/multerConfig.js";
 const doctorRoute = express.Router();
 
@@ -18,6 +19,10 @@ doctorRoute.get( "/detail", authentication, authorization( [ "doctor" ] ),docInf
 doctorRoute.put( "/update", authentication, authorization( [ "doctor" ] ), upload.single( "licenceImage"),
  checkSchema( doctorInfoSchemaValidator), inputValidator, docInfoController.update );
 
- doctorRoute.get( "/list", authentication, authorization( [ "admin" ] ),docInfoController.list );
+ //Route for getting doctor for admin based on the conditions
+doctorRoute.get( "/list", authentication, authorization( [ "admin" ] ),docInfoController.list );
+
+//Route for the updating the doctor  verification status
+doctorRoute.put( "/verify", authentication, authorization( [ "admin" ]),checkSchema( { doctor : userId } ),inputValidator, docInfoController.verify )
 
 export default doctorRoute;
