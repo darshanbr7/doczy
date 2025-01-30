@@ -16,6 +16,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.10.0",
     "react-toastify": "^11.0.2",
+    "time-slots-generator": "^1.0.6",
     "validator": "^13.12.0"
   },
   "scripts": {

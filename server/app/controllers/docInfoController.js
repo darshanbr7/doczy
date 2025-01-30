@@ -138,11 +138,3 @@ docInfoController.verify = async  ( req, res ) => {
 
 export default docInfoController;
 
-/* 
-.populate({
-                model: "Profile",
-                path: "profileId",
-                select: "avatar",
-            })
-            .exec()
-*/

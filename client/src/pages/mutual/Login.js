@@ -88,9 +88,11 @@ const Login = () => {
                         <div className="bg-white p-8 rounded-lg shadow-md w-96  mt-10   mb-20">
                             <form onSubmit={handleSubmit}>
                                 <div className=" mb-7 block ">
-                                    <label className="   ml-1 block   text-sm font-medium text-gray-700"> Phone Number / Email ID  : </label>
+                                    <label  htmlFor = "email"className="   ml-1 block   text-sm font-medium text-gray-700"> Phone Number / Email ID  : </label>
                                     <input
                                         type="text"
+                                        id ="email"
+                                        name = "email"
                                         value={loginInput}
                                         placeholder="Phone Number / Email ID"
                                         onChange={(e) => {
@@ -103,11 +105,13 @@ const Login = () => {
                                     {clientErrors?.loginInput && <span className="text-sm text-red-400 font-semibold"> {clientErrors?.loginInput}</span>}
                                 </div>
                                 <div className=" mb-4 block ">
-                                    <label className="ml-1 block text-sm font-medium text-gray-700"> Password  : </label>
+                                    <label  htmlFor = "password" className="ml-1 block text-sm font-medium text-gray-700"> Password  : </label>
                                     <div className="relative">
                                         <input
                                             type={click ? "text" : "password"}
                                             value={password}
+                                            id="password"
+                                            name="password"
                                             onChange={(e) => {
                                                 setPassword(e.target.value)
                                             }}

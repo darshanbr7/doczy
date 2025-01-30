@@ -48,54 +48,39 @@ const profileSlice = createSlice( {
     initialState :  {
         serverError : null,
         userDetail : null,
-        isEditing : false,
         isLoading : false
     },
-    reducers : {
-        setEditing : ( state, action ) => {
-            state.serverError = null;
-            state.isEditing = true;
-            state.userDetail = null;
-            state.isLoading = false
-        }
-        
-    },
+   
     extraReducers : ( builders ) => {
         // builders for getting the profile
         builders.addCase( getProfile.pending, (  state ) => {
             state.serverError = null;
-            state.editId = null ;
             state.userDetail = null;
             state.isLoading = true 
         })
         builders.addCase( getProfile.fulfilled, (  state, action  ) => {
             state.serverError = null;
-            state.editId = null;
             state.userDetail = action.payload;
             state.isLoading = false 
         })
         builders.addCase( getProfile.rejected, (  state, action  ) => {
             state.serverError = action.payload;
-            state.editId = null;
             state.userDetail = null;
             state.isLoading = false 
         })
         //builders for upload the profile
         builders.addCase( uploadProfile.pending, (  state ) => {
             state.serverError = null;
-            state.editId = null ;
             state.userDetail = null;
             state.isLoading = true 
         })
         builders.addCase( uploadProfile.fulfilled, (  state, action  ) => {
             state.serverError = null;
-            state.editId = null;
             state.userDetail = action.payload;
             state.isLoading = false 
         })
         builders.addCase( uploadProfile.rejected, (  state, action  ) => {
             state.serverError = action.payload;
-            state.editId = null;
             state.userDetail = null;
             state.isLoading = false 
         })
@@ -103,19 +88,16 @@ const profileSlice = createSlice( {
         //builders for update the profile
         builders.addCase( updateProfile.pending, (  state ) => {
             state.serverError = null;
-            state.editId = null ;
             state.userDetail = null;
             state.isLoading = true 
         })
         builders.addCase( updateProfile.fulfilled, (  state, action  ) => {
             state.serverError = null;
-            state.editId = null;
             state.userDetail = action.payload;  
             state.isLoading = false 
         })
         builders.addCase( updateProfile.rejected, (  state, action  ) => {
             state.serverError = action.payload;
-            state.editId = null;
             state.isLoading = false 
         })
     }

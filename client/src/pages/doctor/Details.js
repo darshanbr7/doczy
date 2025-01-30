@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import CreatableSelect from 'react-select/creatable';
 import { HiPencilSquare } from "react-icons/hi2";
-import { createSpecializations, createDoctorDetails, getDoctorDetails, updateDoctorDetails } from "../../slices/doctorDetailsSlice";
+import { createSpecializations, createDoctorDetails, updateDoctorDetails } from "../../slices/doctorDetailsSlice";
 import Spinner from "../mutual/Spinner";
 import SideNavbar from "../mutual/SideNavbar";
 import { format } from "date-fns";

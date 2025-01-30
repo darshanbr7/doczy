@@ -19,10 +19,12 @@ import OptionLogin from './pages/mutual/OptionLogin';
 import Profile from "./pages/mutual/Profile";
 import VerifyAccount from './pages/mutual/VerifyAccount';
 import Spinner from './pages/mutual/Spinner';
+import Contact from './pages/mutual/Contact';
 
 import VerifyDoctors from './pages/admin/VerifyDoctors';
 
 import Details from "./pages/doctor/Details";
+import GenerateSlots from './pages/doctor/GenerateSlots';
 
 import Appointment from "./pages/customer/Doctors"
 
@@ -57,7 +59,9 @@ function App() {
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path='/profile' element={<PrivateRoute> <Profile /></PrivateRoute>} />
           <Route path='/dashboard' element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />
+          <Route path='/contact' element={<PrivateRoute permittedRoles={["customer", "doctor"]}> <Contact /></PrivateRoute>} />
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
+          <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <Appointment /></PrivateRoute>} />
           <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
         </Routes>

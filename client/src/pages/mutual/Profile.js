@@ -68,7 +68,6 @@ const Profile = () => {
       setClientError( errors );
     } else {
       setClientError( null );
-      try {
         const uploadData = new FormData();
         uploadData.append("avatar", formData.avatar);
         uploadData.append("gender", formData.gender);
@@ -81,9 +80,6 @@ const Profile = () => {
         } else if( userDetail && userDetail.isSubscriber ){
           dispatch( updateProfile( uploadData ) );
         }
-      } catch (error) {
-        console.log( error )
-      }
     }
   }
   return (

@@ -134,10 +134,12 @@ const Register = () => {
                                     }
                                 </div>
                                 <div className="  mt-3 mb-7 block ">
-                                    <label className="   ml-1 block   text-sm font-medium text-gray-700"> User Name  : </label>
+                                    <label  htmlFor = "name" className="   ml-1 block   text-sm font-medium text-gray-700"> User Name  : </label>
                                     <input
                                         type="text"
                                         value={formData.name}
+                                        id="name"
+                                        name="name"
                                         placeholder="User Name "
                                         onChange={(e) => {
                                             setFormData({ ...formData, name: e.target.value });
@@ -149,9 +151,11 @@ const Register = () => {
                                     {clientErrors?.name && <span className="text-sm text-red-400 font-semibold"> {clientErrors?.name}</span>}
                                 </div>
                                 <div className=" mb-7 block ">
-                                    <label className="   ml-1 block   text-sm font-medium text-gray-700"> Email ID  : </label>
+                                    <label  htmlFor = "email" className="   ml-1 block   text-sm font-medium text-gray-700"> Email ID  : </label>
                                     <input
                                         type="text"
+                                        name="email"
+                                        id="email"
                                         value={formData.email}
                                         placeholder="Email ID"
                                         onChange={(e) => {
@@ -164,9 +168,11 @@ const Register = () => {
                                     {clientErrors?.email && <span className="text-sm text-red-400 font-semibold"> {clientErrors?.email}</span>}
                                 </div>
                                 <div className=" mb-7 block ">
-                                    <label className="   ml-1 block   text-sm font-medium text-gray-700"> PhoneNumber  : </label>
+                                    <label  htmlFor = "phoneNumber"className="   ml-1 block   text-sm font-medium text-gray-700"> PhoneNumber  : </label>
                                     <input
                                         type="text"
+                                        id="phoneNumber"
+                                        name="phoneNumber"
                                         value={formData.phoneNumber}
                                         placeholder="Phone Number"
                                         onChange={(e) => {
@@ -179,10 +185,12 @@ const Register = () => {
                                     {clientErrors?.phoneNumber && <span className="text-sm text-red-400 font-semibold"> {clientErrors?.phoneNumber}</span>}
                                 </div>
                                 <div className=" mb-7 block ">
-                                    <label className="ml-1 block text-sm font-medium text-gray-700"> Password  : </label>
+                                    <label  htmlFor = "password" className="ml-1 block text-sm font-medium text-gray-700"> Password  : </label>
                                     <div className="relative">
                                         <input
                                             type="password"
+                                            name="password"
+                                            id="password"
                                             value={formData.password}
                                             onChange={(e) => {
                                                 setFormData({ ...formData, password: e.target.value })
@@ -195,10 +203,12 @@ const Register = () => {
                                     {clientErrors?.password && <span className="text-sm text-red-400 font-semibold"> {clientErrors?.password}</span>}
                                 </div>
                                 <div className=" mb-7 block ">
-                                    <label className="ml-1 block text-sm font-medium text-gray-700"> Confirm Password    : </label>
+                                    <label  htmlFor = "confirmPassword" className="ml-1 block text-sm font-medium text-gray-700"> Confirm Password    : </label>
                                     <div className="relative">
                                         <input
                                             type={click ? "text" : "password"}
+                                            name="confirmPassword"
+                                            id="confirmPassword"
                                             value={formData.confirmPassword}
                                             onChange={(e) => {
                                                 setFormData({ ...formData, confirmPassword: e.target.value })

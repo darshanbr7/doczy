@@ -31,9 +31,11 @@ const VerifyDoctors = () => {
            dispatch( getDoctors( data ) );
         }, 1000)
     ).current;
+    
     useEffect(() => {
         debounceApiCall(formData);
     }, [formData])
+
     const hanldleApprove = ( id ) => {
         dispatch( handleVerification( { id,  isVerified : true  } ) );
     }
@@ -59,6 +61,8 @@ const VerifyDoctors = () => {
                         <Select
                             options={statusOptions}
                             onChange={handleSlect}
+                            isSearchable={false} 
+                            isClearable={false} 
                             placeholder="Status"
                             className="ml-2 w-1/4 h-9  focus:outline-none font-semibold text-sm opacity-90"
                         />
