@@ -20,9 +20,11 @@ doctorRoute.put( "/update", authentication, authorization( [ "doctor" ] ), uploa
  checkSchema( doctorInfoSchemaValidator), inputValidator, docInfoController.update );
 
  //Route for getting doctor for admin based on the conditions
-doctorRoute.get( "/list", authentication, authorization( [ "admin" ] ),docInfoController.list );
+doctorRoute.get( "/list", authentication, authorization( [ "admin" ] ), docInfoController.list );
 
 //Route for the updating the doctor  verification status
 doctorRoute.put( "/verify", authentication, authorization( [ "admin" ]),checkSchema( { doctor : userId } ),inputValidator, docInfoController.verify )
+
+doctorRoute.get( "/listed", authentication, authorization( ["customer"]), docInfoController.availableForCustomer )
 
 export default doctorRoute;

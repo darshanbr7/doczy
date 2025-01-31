@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./config/routes/authRoute.js";
 import profileRoute from "./config/routes/profileRoute.js";
 import doctorRoute from "./config/routes/doctorRoute.js"
+import slotRouter from "./config/routes/slotRoute.js";
 import specializationRoute from "./config/routes/specializationRoute.js";
 import dbConnect from "./config/db/dbConnection.js";
 
@@ -24,6 +25,8 @@ app.use( "/api/profile", profileRoute );
 app.use( "/api/doctor", doctorRoute );
 //specialization related Routes
 app.use( "/api/specialization", specializationRoute );
+// slot related routes
+app.use( "/api/slots", slotRouter );
 
 // Start the server and listen on the specified port
 app.listen ( port, ( ) => {

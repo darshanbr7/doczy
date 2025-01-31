@@ -5,7 +5,7 @@ import getCoordinates from "../helpers/doctorControllerHelper/getCoordinates.js"
 import getProfile from "../helpers/profileControllerHelper/getProfile.js";
 import uploadMedia from "../helpers/profileControllerHelper/uploadMedia.js";
 import getDoctorInfo from "../helpers/doctorControllerHelper/getDoctorInfo.js";
-import aggrigator from "../helpers/doctorControllerHelper/aggrigator.js";
+import { aggrigatorForAdmin, aggrigatorForCustomer } from "../helpers/doctorControllerHelper/aggrigator.js";
 
 /**
  * This function is used to handles the creation of a new doctor's information/details.
@@ -100,22 +100,34 @@ docInfoController.update = async (req, res) => {
     }
 }
 
+/**
+ * This function is used to list doctors based on filters and pagination parameters.
+ *
+ * This function retrieves a list of doctors from the database, applying filters like doctor name and verification status
+ * along with pagination (page and limit). It constructs an aggregation pipeline based on the filters, performs the query 
+ * using MongoDB's aggregation framework, and returns the result along with metadata such as the total number of results 
+ * @param {Object} req - The request object containing query parameters for filtering and pagination.
+ * @param {Object} res - The response object used to send back the doctor data and pagination metadata.
+ */
 docInfoController.list = async (req, res) => {
     try {
         const { name, verified, page, limit, } = _.pick(req.query, ["name", "verified", "page", "limit"]);
-        const isVerified = verified === "true" ? true : false ;
+        const isVerified = verified === "true" ? true : false;
         const pageNumber = parseInt(page) || 1;
         const pageLimit = parseInt(limit) || 2;
         const skip = (pageNumber - 1) * pageLimit;
-        const pipeLine = aggrigator( { name, isVerified, skip, pageLimit })
+        const pipeLine = aggrigatorForAdmin({ name, isVerified, skip, pageLimit })
 
-        const response = await DocInfo.aggregate( pipeLine )
-        const total = await DocInfo.countDocuments( { isVerified } );
+        const response = await DocInfo.aggregate(pipeLine)
+        const total = await DocInfo.countDocuments({
+            isVerified,
+            ...(name && { "user.name": { $regex: name, $options: "i" } })
+        });
         res.json({
             data: response,
             total,
-            page,
-            totalPages: Math.ceil(total / pageLimit )
+            page : Number( page ),
+            totalPages: Math.ceil(total / pageLimit)
         });
     } catch (error) {
         console.log(error)
@@ -123,18 +135,60 @@ docInfoController.list = async (req, res) => {
     }
 }
 
-docInfoController.verify = async  ( req, res ) => {
+/**
+ *  this is the functions for admin to verify a doctor's verification status.
+
+ * @param {Object} req - The request object containing the doctor ID as a query parameter and verification status (`isVerified`) in the body.
+ * @param {Object} res - The response object used to send back the updated doctor data or error response.
+ */
+docInfoController.verify = async (req, res) => {
     try {
-        const {doctor} = _.pick( req.query, [ "doctor" ] );
-        const {isVerified} = _.pick( req.body, [ "isVerified" ] );
-         const updated = await DocInfo.findByIdAndUpdate( doctor, { isVerified }, { new : true , runValidators : true })
-         console.log( updated )
-        res.json(updated );
+        const { doctor } = _.pick(req.query, ["doctor"]);
+        const { isVerified } = _.pick(req.body, ["isVerified"]);
+        const updated = await DocInfo.findByIdAndUpdate(doctor, { isVerified }, { new: true, runValidators: true })
+        console.log(updated)
+        res.json(updated);
     } catch (error) {
-        res.status( 500 ).json ( { error : [ { msg : "Something went wrong while verifying doctor"}]})
+        res.status(500).json({ error: [{ msg: "Something went wrong while verifying doctor" }] })
     }
 }
 
+docInfoController.availableForCustomer = async (req, res) => {
+    try {
+        const { name, location, page, limit } = _.pick(req.query, ["name", "specialization", "location", "page", "limit"]);
+        const specialization = [];
+        const isVerified = true;
+        const pageNumber = parseInt(page) || 1;
+        const pageLimit = parseInt(limit) || 2;
+        const skip = (pageNumber - 1) * pageLimit;
+
+        const pipeLine = aggrigatorForCustomer({ name, specialization, location, isVerified, skip, pageLimit });
+
+        const response = await DocInfo.aggregate(pipeLine);
+
+        const total = await DocInfo.countDocuments({
+            isVerified,
+            ...(name && { "user.name": { $regex: name, $options: "i" } }),  
+            ...(location && {
+                $or: [
+                    { "address.city": { $regex: location, $options: "i" } },  
+                    { "address.street": { $regex: location, $options: "i" } } 
+                ]
+            })
+        });
+
+        res.json({
+            data: response,
+            total,
+            page : Number( page ),
+            totalPages: Math.ceil(total / pageLimit)
+        });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error: [{ msg: "Something went wrong while getting doctor info " }] })
+    }
+}
 
 export default docInfoController;
 

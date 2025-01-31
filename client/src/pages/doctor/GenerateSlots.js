@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
-import SideNavbar from "../mutual/SideNavbar";
 import { IoRemoveCircleOutline, IoAddCircleOutline } from "react-icons/io5";
 import { TbXboxX } from "react-icons/tb";
 import { addMinutes, format, isBefore, parseISO } from "date-fns";
+import { useDispatch, useSelector } from "react-redux"
+import { createSlots } from "../../slices/slotSlice";
+import SideNavbar from "../mutual/SideNavbar";
+import Spinner from "../mutual/Spinner";
+
 
 const GenerateSlots = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isLoading, serverError } = useSelector(state => state.slot)
     const { details } = useSelector(state => state.doctorDetails);
     const [date, setDate] = useState("");
     const [timeSlots, setTimeSlots] = useState([{ startTime: '', endTime: '' }]);
@@ -38,8 +43,8 @@ const GenerateSlots = () => {
         } else if (new Date() > new Date(date)) {
             errors.date = "Date con't be past"
         }
-       
-        let prevEnd ;
+
+        let prevEnd;
         timeSlots.forEach((slot, index) => {
             if (!slot.startTime || !slot.endTime) {
                 errors[`time-${index}`] = "Start and End time are required.";
@@ -47,7 +52,7 @@ const GenerateSlots = () => {
                 const start = parseISO(`${date}T${slot.startTime}:00`);
                 const end = parseISO(`${date}T${slot.endTime}:00`);
                 //isBefore- is date-fns method to  compare the start and end time
-                if( isBefore(start, prevEnd  )){
+                if (isBefore(start, prevEnd)) {
                     errors[`time-${index}`] = "New StartTime should greter than last EndTime.";
                 }
                 if (isBefore(end, start)) {
@@ -85,18 +90,18 @@ const GenerateSlots = () => {
             setSlots(newSlots);
         }
     }
-    const handleRemoveSlot = ( index ) => {
-        const newSlots = slots.filter( ( _, i) => i!== index );
-        setSlots( newSlots);
+    const handleRemoveSlot = (index) => {
+        const newSlots = slots.filter((_, i) => i !== index);
+        setSlots(newSlots);
     }
     const handleSubmit = (e) => {
-        const updatedSlotes = slots.map( ( ele, i) => ({...ele, id: parseFloat(i)+1 } ) );
-        console.log( updatedSlotes );
-        e.preventDefault();
+        const updatedSlotes = slots.map((ele, i) => ({ ...ele, id: parseFloat(i) + 1 }));
+        dispatch(createSlots({ slots: updatedSlotes, date }))
     }
 
     return (
         <div className="flex bg-gradient-to-r from-blue-100 to-gray-200 min-h-screen">
+            {isLoading && <Spinner />}
             <div className="p-4 w-auto">
                 <SideNavbar />
             </div>
@@ -213,12 +218,12 @@ const GenerateSlots = () => {
                                             </div>
                                         ))}
                                         <div className="flex justify-center">
-                                            <input 
+                                            <input
                                                 type="submit"
-                                                value= "Generate Slots"
+                                                value="Generate Slots"
                                                 className="w-full py-2 px-4 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50 mt-6"
                                             />
-                                                
+
                                         </div>
                                     </form>
                                 </div>
@@ -232,25 +237,33 @@ const GenerateSlots = () => {
                                             return (
                                                 <div key={i} className="relative flex text-sm justify-center items-center bg-yellow-500 text-white font-semibold rounded-lg py-3 px-4 text-center">
                                                     {ele.time}
-                                                    <TbXboxX  
-                                                        size ={ 22 } 
-                                                        color = "white" 
-                                                        onClick={ ( ) => handleRemoveSlot( i )}
-                                                        className="absolute top-0 right-0 p-1 cursor-pointer text-gray-800 transition-transform transform hover:scale-125"  />
+                                                    <TbXboxX
+                                                        size={22}
+                                                        color="white"
+                                                        onClick={() => handleRemoveSlot(i)}
+                                                        className="absolute top-0 right-0 p-1 cursor-pointer text-gray-800 transition-transform transform hover:scale-125" />
                                                 </div>
                                             );
                                         })}
                                     </div>
-                                    <div className="flex justify-center items-center  mt-8"> 
-                                        <button 
-                                            className="px-4 py-2 bg-green-400 rounded-sm font-semibold text-white cursor-pointer hover:scale-110"
-                                            onClick={ handleSubmit }
-                                            > 
-                                            Submit 
-                                            </button>
+                                    <div  className="mt-2">
+                                        {
+                                            serverError && serverError.map((ele, i) => {
+                                                return <li key={i} className="text-sm font-semibold text-red-500 opacity-80"> {ele.msg}</li>
+                                            })
+                                        }
+                                    </div>
+                                    <div className="flex justify-center items-center  mt-8">
+                                        <button
+                                            className={`${slots.length === 0 ? "bg-red-400" : "bg-green-400"} px-4 py-2 rounded-sm font-semibold text-white cursor-pointer hover:scale-110`}
+                                            disabled={slots.length === 0}
+                                            onClick={handleSubmit}
+                                        >
+                                            Submit
+                                        </button>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
 

@@ -125,7 +125,7 @@ const Details = () => {
         }
         if (!formData.address.pincode) {
             errors.pincode = "Pincode con't be empty"
-        } else if (formData.address.pincode.length < 6 && formData.address.pincode.length > 6) {
+        } else if (formData.address.pincode.length < 6 || formData.address.pincode.length > 6) {
             errors.pincode = "Pincodes are only 6 digits"
         }
     }
