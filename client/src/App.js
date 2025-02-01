@@ -20,13 +20,15 @@ import Profile from "./pages/mutual/Profile";
 import VerifyAccount from './pages/mutual/VerifyAccount';
 import Spinner from './pages/mutual/Spinner';
 import Contact from './pages/mutual/Contact';
+import NotFound from './pages/mutual/NotFound';
 
 import VerifyDoctors from './pages/admin/VerifyDoctors';
 
 import Details from "./pages/doctor/Details";
 import GenerateSlots from './pages/doctor/GenerateSlots';
 
-import Appointment from "./pages/customer/Doctors"
+import FindDoctors from "./pages/customer/FindDoctors"
+import BookAppontment from './pages/customer/BookAppointment';
 
 
 function App() {
@@ -53,8 +55,8 @@ function App() {
         {/* Ensures the footer always stays at the bottom without causing overflow. */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<PrivateRoute> <Login /> </PrivateRoute>} />
+          <Route path="/register" element={<PrivateRoute> <Register /></PrivateRoute>} />
           <Route path='/option-login' element={<OptionLogin />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path='/profile' element={<PrivateRoute> <Profile /></PrivateRoute>} />
@@ -62,8 +64,10 @@ function App() {
           <Route path='/contact' element={<PrivateRoute permittedRoles={["customer", "doctor"]}> <Contact /></PrivateRoute>} />
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
-          <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <Appointment /></PrivateRoute>} />
+          <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />
+          <Route path='/book-appointment' element={<PrivateRoute permittedRoles={["customer"]}> <BookAppontment /></PrivateRoute>} />
           <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
+          <Route path='*'  element = { <NotFound/> }/>
         </Routes>
       </div>
       {showFooter.includes(location.pathname) && <Footer />}

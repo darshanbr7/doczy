@@ -40,6 +40,7 @@ const doctorVerifySlice = createSlice( {
     },
     reducers : {
         setPage : ( state, action ) => {
+            console.log( "zazz", action.payload )
             state.currentPage = action.payload;
         }
     },

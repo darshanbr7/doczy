@@ -15,12 +15,27 @@ export const createSlots = createAsyncThunk( "posts/generateSlots", async ( form
         return rejectWithValue( error?.response?.data?.error )
     }
 })
+export const getSlots = createAsyncThunk( "get/getSlots",  async ( { doctorId, date},  { rejectWithValue } ) => {
+    try {
+        const response = await axiosInstance.get( `/slots/get?doctor=${doctorId}&date=${date}`,{
+            headers : {
+                Authorization : localStorage.getItem("token")
+            }
+        })
+        console.log( response.data );
+        return response.data;
+    } catch (error) {
+        console.log( error );
+        return rejectWithValue( error?.response?.data?.error)
+    }
+})
 
 const slotSlice = createSlice( {
     name : "slot",
     initialState : {
         isLoading : false,
         serverError : null,
+        slots : []
     },
     extraReducers : ( builders ) =>{
         builders.addCase( createSlots.pending, ( state ) => {
@@ -31,6 +46,19 @@ const slotSlice = createSlice( {
             state.serverError = null;
         })
         builders.addCase( createSlots.rejected, ( state, action ) => {
+            state.serverError = action.payload;
+            state.isLoading = false;
+        })
+
+        builders.addCase( getSlots.pending, ( state ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( getSlots.fulfilled, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = null;
+            state.slots = action.payload.slots;
+        })
+        builders.addCase( getSlots.rejected, ( state, action ) => {
             state.serverError = action.payload;
             state.isLoading = false;
         })

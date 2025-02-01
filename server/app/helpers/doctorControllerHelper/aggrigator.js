@@ -91,22 +91,6 @@ export const aggrigatorForAdmin = ({ name, isVerified, skip, pageLimit }) => {
 }
 
 
-/* 
-
-   
-    pipeLine.push({
-        $match: { isVerified }
-    })
-    pipeLine.push({
-        $project: {
-            "profileId": 0, 
-            "__v": 0, 
-            "updatedAt": 0, 
-            "createdAt": 0, 
-        }
-    });
-    
-*/
 export const aggrigatorForCustomer = ({ name, isVerified, skip, pageLimit, location, specialization }) => {
 
     const pipeLine = [];
@@ -212,70 +196,3 @@ export const aggrigatorForCustomer = ({ name, isVerified, skip, pageLimit, locat
 
     return pipeLine;
 };
-
-
-/* 
-
-
-
-
-    pipeLine.push({
-        $lookup: {
-            from: "docinfos",  // Ensure this references the correct collection name for docInfo
-            localField: "profile.docInfoId",  // Assuming docInfoId is the reference to docInfo
-            foreignField: "_id",
-            as: "docInfo"
-        }
-    });
-
-    // 6. Unwind the docInfo array
-    pipeLine.push({
-        $unwind: {
-            path: "$docInfo"
-        }
-    });
-    // 7. Apply $match for name and isVerified filters
-    if (name && name.trim() !== "") {
-        pipeLine.push({
-            $match: {
-                "user.name": { $regex: name, $options: "i" }  // Case-insensitive match
-            }
-        });
-    }
-
-    // Match isVerified field in DocInfo
-    pipeLine.push({
-        $match: { "docInfo.isVerified": isVerified }
-    });
-
-    // 8. Apply $match for location (if provided)
-    if (location && location.trim() !== "") {
-        const locationRegex = new RegExp(location, "i");  // Case-insensitive match
-        pipeLine.push({
-            $match: {
-                $or: [
-                    { "docInfo.address.street": { $regex: locationRegex } },
-                    { "docInfo.address.city": { $regex: locationRegex } }
-                ]
-            }
-        });
-    }
-
-    // 9. Apply $match for specialization (if provided)
-    if (specialization && specialization.length > 0) {
-        pipeLine.push({
-            $match: {
-                "docInfo.specialization": { $in: specialization }  // Match specialization in docInfo
-            }
-        });
-    }
-
-    pipeLine.push({
-        $skip: skip
-    });
-
-    pipeLine.push({
-        $limit: pageLimit
-    });
-
-*/

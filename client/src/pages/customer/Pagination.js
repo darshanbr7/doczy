@@ -4,8 +4,8 @@ import { setPage, getDoctors } from "../../slices/customerSlice";
 
 const Pagination = ( { formData }) => {
     const dispatch = useDispatch();
-    const { currentPage, totalPages } = useSelector(state => state.VerifyDoctors);
-    const handlePageChange = (page) => {
+    const { currentPage, totalPages } = useSelector(state => state.customer);
+    const handlePageChange = ( page ) => {
         dispatch(setPage(page))
         dispatch(getDoctors({...formData, page :  page  } ));
     }

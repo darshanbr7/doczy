@@ -128,7 +128,7 @@ const Profile = () => {
                 value={ formData.dob}
                 onChange={( e ) =>  setFormData( { ...formData, dob: e.target.value})}
                 className=" font-semibold text-sm ml-3 opacity-70"
-                max={ new Date( Date.now()) }
+                max={new Date(Date.now()).toISOString().split('T')[0] }
               />
             </div>
             <div>

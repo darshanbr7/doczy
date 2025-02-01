@@ -1,16 +1,21 @@
-const slotValidator = {
-    date: {
-        in: ["body"],
-        exists: {
-            errorMessage: "Date field is required"
-        },
-        notEmpty: {
-            errorMessage: "Date field should not be empty"
-        },
-        trim: true,
-        isISO8601: {
-            errorMessage: "Date should be in the format of yyyy-MM-dd"
-        },
+import { userId } from "./queryConstants.js"
+const date = {
+    in: ["body"],
+    exists: {
+        errorMessage: "Date field is required"
+    },
+    notEmpty: {
+        errorMessage: "Date field should not be empty"
+    },
+    trim: true,
+    isISO8601: {
+        errorMessage: "Date should be in the format of yyyy-MM-dd"
+    }
+}
+
+export const slotValidator = {
+    date:{
+        ...date,
         custom: {
             options: (value) => {
                 const date = new Date(value);
@@ -62,5 +67,25 @@ const slotValidator = {
         }
     }
 };
+export const  reviverValidate = {
+    doctor : {
+        ...userId
+    },
+    date : {
+        ...date,
+        in: [ "query"],
+        custom: {
+            options: (value) => {
+                const date = new Date(value);
+                if (isNaN(date)) {
+                    throw new Error("Invalid date format");
+                }
+                if (date < new Date().setHours( 0, 0 , 0 , 0)) {
+                    throw new Error("Can not able to get slots for past dates");
+                }
+                return true;
+            }
+        }
+    }
+}
 
-export default slotValidator;

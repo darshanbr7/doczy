@@ -36,3 +36,36 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* Fade-In Effect */
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+}
+
+/* Typing Effect */
+@keyframes typing {
+  0% {
+      width: 0;
+  }
+  100% {
+      width: 100%;
+  }
+}
+
+/* Applying animations */
+.animate-fade-in {
+  animation: fadeIn 2s ease-out;
+}
+
+.animate-typing {
+  animation: typing 3s steps(15) 1s forwards;
+  white-space: nowrap;
+  overflow: hidden;
+}
+

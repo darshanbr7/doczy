@@ -155,8 +155,8 @@ docInfoController.verify = async (req, res) => {
 
 docInfoController.availableForCustomer = async (req, res) => {
     try {
-        const { name, location, page, limit } = _.pick(req.query, ["name", "specialization", "location", "page", "limit"]);
-        const specialization = [];
+        const { name, location, expertIn , page, limit } = _.pick(req.query, ["name", "location", "expertIn", "page", "limit"]); 
+        const specialization = expertIn 
         const isVerified = true;
         const pageNumber = parseInt(page) || 1;
         const pageLimit = parseInt(limit) || 2;
@@ -165,7 +165,6 @@ docInfoController.availableForCustomer = async (req, res) => {
         const pipeLine = aggrigatorForCustomer({ name, specialization, location, isVerified, skip, pageLimit });
 
         const response = await DocInfo.aggregate(pipeLine);
-
         const total = await DocInfo.countDocuments({
             isVerified,
             ...(name && { "user.name": { $regex: name, $options: "i" } }),  
@@ -180,7 +179,7 @@ docInfoController.availableForCustomer = async (req, res) => {
         res.json({
             data: response,
             total,
-            page : Number( page ),
+            page : Number( page ) || 1,
             totalPages: Math.ceil(total / pageLimit)
         });
 

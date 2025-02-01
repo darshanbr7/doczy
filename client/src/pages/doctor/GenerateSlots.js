@@ -149,7 +149,7 @@ const GenerateSlots = () => {
                                                 onChange={handleDateChange}
                                                 className={`${clientError?.date ? "border-2 border-b-red-400" : "border"
                                                     } w-full px-4 py-2 font-semibold opacity-80 border-gray-300 rounded-lg shadow-sm focus:outline-none text-sm`}
-                                                min={new Date(Date.now())}
+                                                min={new Date(Date.now()).toISOString().split('T')[0]}
                                             />
                                         </div>
                                         {clientError?.date && (
