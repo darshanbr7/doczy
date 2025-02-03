@@ -11,4 +11,5 @@ const slotRouter = express.Router();
 slotRouter.post( "/create", authentication, authorization( ["doctor"]), checkSchema( slotValidator ), inputValidator,slotController.create   )
 
 slotRouter.get( "/get", authentication, authorization( [ "doctor", "customer" ] ), checkSchema( reviverValidate ), inputValidator,slotController.getSlots );
+
 export default slotRouter;

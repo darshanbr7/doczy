@@ -6,6 +6,7 @@ import profileRoute from "./config/routes/profileRoute.js";
 import doctorRoute from "./config/routes/doctorRoute.js"
 import slotRouter from "./config/routes/slotRoute.js";
 import specializationRoute from "./config/routes/specializationRoute.js";
+import paymentRoute from "./config/routes/paymentRoute.js"
 import dbConnect from "./config/db/dbConnection.js";
 
 // Load environment variables from a .env file and make it available on process object
@@ -27,6 +28,8 @@ app.use( "/api/doctor", doctorRoute );
 app.use( "/api/specialization", specializationRoute );
 // slot related routes
 app.use( "/api/slots", slotRouter );
+//payment related routes
+app.use( "/api/payment", paymentRoute );
 
 // Start the server and listen on the specified port
 app.listen ( port, ( ) => {

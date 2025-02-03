@@ -97,7 +97,7 @@ const Profile = () => {
                 alt="Profile "
                 className="w-full h-full rounded-full object-cover"
               />
-              <div className="absolute bottom-0 right-4 bg-white p-2 rounded-full shadow-md">
+              <div className="absolute bottom-0 right-4 bg-white p-2 cursor-pointer rounded-full shadow-md">
                 <LiaUserEditSolid size={18} onClick={() => fileInputRef.current.click()} />
               </div>
               <input

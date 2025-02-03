@@ -2,6 +2,8 @@ import './App.css';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { getUser } from './slices/authSlice';
 import { getProfile } from './slices/profileSlice';
 import { getSpecializations } from './slices/doctorDetailsSlice';
@@ -21,6 +23,7 @@ import VerifyAccount from './pages/mutual/VerifyAccount';
 import Spinner from './pages/mutual/Spinner';
 import Contact from './pages/mutual/Contact';
 import NotFound from './pages/mutual/NotFound';
+import Payment from './pages/mutual/Payment';
 
 import VerifyDoctors from './pages/admin/VerifyDoctors';
 
@@ -35,6 +38,7 @@ function App() {
   const location = useLocation();
   const dispatch = useDispatch()
   const { userInfo } = useSelector(state => state.auth)
+  const stripePromise = loadStripe("pk_test_51QngbLGyuPvXvXV2P1MHeuWmW65F367lFM1I84zHYDgQv8QLGjkz32gWANZIkSRRVH2oSGKXUxJDnPLnEYwEIRuI00btYQMQxT")
   const showFooter = ["/", "/login", "/register"];
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -55,13 +59,14 @@ function App() {
         {/* Ensures the footer always stays at the bottom without causing overflow. */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<PrivateRoute> <Login /> </PrivateRoute>} />
-          <Route path="/register" element={<PrivateRoute> <Register /></PrivateRoute>} />
+          <Route path="/login" element={<Login /> } />
+          <Route path="/register" element={ <Register />} />
           <Route path='/option-login' element={<OptionLogin />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path='/profile' element={<PrivateRoute> <Profile /></PrivateRoute>} />
           <Route path='/dashboard' element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />
           <Route path='/contact' element={<PrivateRoute permittedRoles={["customer", "doctor"]}> <Contact /></PrivateRoute>} />
+          <Route path='/payment' element={<Elements stripe={stripePromise}> <PrivateRoute permittedRoles={["customer", "doctor"]}> <Payment /></PrivateRoute></Elements>} />
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />

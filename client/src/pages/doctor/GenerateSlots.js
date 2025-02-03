@@ -223,7 +223,6 @@ const GenerateSlots = () => {
                                                 value="Generate Slots"
                                                 className="w-full py-2 px-4 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50 mt-6"
                                             />
-
                                         </div>
                                     </form>
                                 </div>

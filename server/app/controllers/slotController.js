@@ -1,6 +1,7 @@
 import _ from "lodash";
 const slotController = {};
 import Slot from "../models/slotModel.js";
+import stripe from "../../config/stripe/stripe.js";
 
 /**
  *  This function is used to creates a new set of appointment slots for a doctor on a specified date.
@@ -49,4 +50,22 @@ slotController.getSlots = async ( req, res ) => {
         return res.status( 500 ).json( { error : [ { msg : "Something went wrong while getting slots"}]})
     }
 }
+
+
+
+slotController.makePayment = async ( req, res ) => {
+    try {
+        const paymentIntent = await stripe.paymentIntents.create ( {
+            amount : 10000,
+            currency : "inr",
+            customer : "cus_RhQ53qy261LO61",
+            description : "test Payment"
+        })
+        console.log( paymentIntent.client_secret );
+        res.json( paymentIntent.client_secret );
+    } catch (error) {
+        return res.status( 500 ).json( { error : [ { msg : "Something went wrong while Making payment"}]})
+    }
+}
+
 export default slotController

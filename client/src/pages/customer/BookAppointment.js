@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { format } from "date-fns";
 import SideNavbar from "../mutual/SideNavbar";
-import { getSlots } from "../../slices/slotSlice"
+import { getSlots, paymentPageOpen } from "../../slices/slotSlice"
+import {  createCustomerSecret } from "../../slices/paymentSlice"
+import Payment from "../mutual/Payment";
+
 const BookAppontment = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { state } = location;
-    const { slots, serverError } = useSelector(state => state.slot);
-    console.log("ss", slots)
+    const { slots, serverError, isOpen } = useSelector(state => state.slot);
+    const  { userInfo } = useSelector( state =>  state.auth)
     const [formData, setFormData] = useState({
         date: format(new Date(), "yyyy-MM-dd"),
         time: "",
@@ -25,11 +29,22 @@ const BookAppontment = () => {
         e.preventDefault();
         dispatch(getSlots({ doctorId: state, date: formData.date }));
     }
-    console.log(formData)
+    const handleBookAppintment = ( ) => {
+        if( formData.time ){
+            dispatch( createCustomerSecret( {amount : 10000 }))
+            dispatch( paymentPageOpen() );
+            navigate( "/payment")
+            
+        }else {
+            toast.warning( "Slot need to selected")
+        }
+    }
     return (
         <div className="flex bg-gradient-to-r from-blue-100 to-gray-200 min-h-screen">
             <div className="w-auto p-4 ">
                 <SideNavbar />
+            </div>
+            <div>
             </div>
             <div className="flex flex-row">
                 <div className="w-full p-8 ">
@@ -97,6 +112,7 @@ const BookAppontment = () => {
                         </div>
                         <div className="flex justify-center items-center  mt-8">
                             <button
+                            onClick={ handleBookAppintment }
                                 className={`${slots.length === 0 ? "bg-red-400" : "bg-cyan-600"} px-4 py-2 rounded-sm font-semibold text-white cursor-pointer hover:scale-110`}
                             >
                                 Book Appointment
@@ -106,7 +122,7 @@ const BookAppontment = () => {
 
                 </div>
             </div>
-
+            
 
         </div>
 

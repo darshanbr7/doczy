@@ -4,7 +4,8 @@ import profileReducer from "./slices/profileSlice";
 import detailsReducer from "./slices/doctorDetailsSlice";
 import verifyDoctorReducer from "./slices/doctorVerifySlice";
 import slotReducer from "./slices/slotSlice";
-import customerReducer from "./slices/customerSlice"
+import customerReducer from "./slices/customerSlice";
+import paymentReducer from "./slices/paymentSlice";
 
 const store = configureStore( {
     reducer : {
@@ -13,7 +14,8 @@ const store = configureStore( {
         doctorDetails : detailsReducer,
         VerifyDoctors : verifyDoctorReducer,
         slot : slotReducer,
-        customer : customerReducer
+        customer : customerReducer,
+        payment : paymentReducer
     }
 })
 

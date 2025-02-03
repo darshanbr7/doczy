@@ -35,7 +35,16 @@ const slotSlice = createSlice( {
     initialState : {
         isLoading : false,
         serverError : null,
+        isOpen : false,
         slots : []
+    },
+    reducers : {
+        paymentPageOpen : ( state ) => {
+            state.isOpen = true;
+        },
+        paymentPageClose  : ( state ) => {
+            state.isOpen = false;
+        }
     },
     extraReducers : ( builders ) =>{
         builders.addCase( createSlots.pending, ( state ) => {
@@ -65,4 +74,5 @@ const slotSlice = createSlice( {
     }
 })
 
+export const { paymentPageOpen, paymentPageClose } = slotSlice.actions;
 export default slotSlice.reducer;

@@ -14,9 +14,9 @@ const PrivateRoute = ( props ) => {
         
     }, [ navigate, location ] );
     // conditions for if the user is already logs in preventing to access login || register page 
-    if (isLoggedIn && (location.pathname === "/login" || location.pathname === "/register")) {
+    /* if (isLoggedIn && (location.pathname === "/login" || location.pathname === "/register")) {
         return <Navigate to="/" replace />;
-    }
+    } */
     if( isLoggedIn && props.permittedRoles && props.permittedRoles.includes( userInfo.role )){
         return props.children
     } else if( isLoggedIn && props.permittedRoles && !props.permittedRoles.includes(userInfo.role ) ){
