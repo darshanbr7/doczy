@@ -48,7 +48,9 @@ const profileSlice = createSlice( {
     initialState :  {
         serverError : null,
         userDetail : null,
-        isLoading : false
+        isLoading : false,
+        paymentError : null,
+        paymentProcessing : false
     },
    
     extraReducers : ( builders ) => {
@@ -102,5 +104,5 @@ const profileSlice = createSlice( {
         })
     }
 })
-export const {  setEditing } = profileSlice.actions
+export const {  setEditing, } = profileSlice.actions
 export default profileSlice.reducer

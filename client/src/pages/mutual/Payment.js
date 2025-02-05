@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MdOutlineCancel } from "react-icons/md";
-import { paymentPageClose } from "../../slices/slotSlice";
+import { paymentPageClose, setPaymentError, setPaymentProcessing } from "../../slices/slotSlice";
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import Spinner from "./Spinner";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const Payment = () => {
+const Payment = ({ formData }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const stripe = useStripe();
     const elements = useElements();
+    console.log( formData.payableAmount )
+   
+    
+    const { isLoading, clientSecret, paymentError, paymentProcessing } = useSelector((state) => state.payment);
 
-    const { isLoading, clientSecret } = useSelector((state) => state.payment);
-    console.log( clientSecret );
-
-    const [paymentError, setPaymentError] = useState(null);
-    const [paymentProcessing, setPaymentProcessing] = useState(false);
+    useEffect(() => {
+        if (!clientSecret) {
+            dispatch(paymentPageClose());
+        }
+    }, [clientSecret, dispatch]);
 
     const handlePaymentSubmit = async (event) => {
-
         event.preventDefault();
-        if (!stripe || !elements) {
-            setPaymentError("Stripe has not loaded yet.");
-            return;
-        }
         setPaymentProcessing(true);
         setPaymentError(null);
         const cardNumber = elements.getElement(CardNumberElement);
@@ -35,11 +32,10 @@ const Payment = () => {
         if (!cardNumber || !cardExpiry || !cardCvc) {
             setPaymentError("Missing card details.");
             setPaymentProcessing(false);
-            return;
         }
 
         const { error, paymentIntent } = await stripe.confirmCardPayment(
-            clientSecret, 
+            clientSecret,
             {
                 payment_method: {
                     card: cardNumber,
@@ -52,9 +48,7 @@ const Payment = () => {
             setPaymentProcessing(false);
         } else if (paymentIntent.status === 'succeeded') {
             setPaymentProcessing(false);
-           toast.success( "Payment was successfull")
-            // dispatch(paymentPageClose());
-            // navigate("/book-appointment");
+            toast.success("Payment was successful");
         }
     };
 
@@ -66,17 +60,19 @@ const Payment = () => {
                     className="absolute top-4 right-4 text-gray-600 text-2xl cursor-pointer hover:text-gray-800"
                     onClick={() => {
                         dispatch(paymentPageClose());
-                        navigate("/book-appointment");
                     }}
                 />
-                <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">Enter Payment Details</h2>
-
+                <div className=" flex justify-center items-center"><p className="text-2xl font-semibold opacity-85"> Payment Page</p></div>
+                <div>
+                    <p className="my-2 font-semibold opacity-85"> Payment Details</p>
+                    <p className="text-sm font-semibold mb-2"> Total Amount : { formData.payableAmount} </p>
+                </div>
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
                         <div className="border rounded-lg p-3">
                             <CardNumberElement
-                                className="w-full focus:outline-none  font-semibold focus:ring-2 focus:ring-blue-500"
+                                className="w-full focus:outline-none font-semibold focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                     </div>

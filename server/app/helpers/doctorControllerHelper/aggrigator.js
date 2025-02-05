@@ -72,10 +72,10 @@ export const aggrigatorForAdmin = ({ name, isVerified, skip, pageLimit }) => {
     })
     pipeLine.push({
         $project: {
-            "profileId": 0, 
-            "__v": 0, 
-            "updatedAt": 0, 
-            "createdAt": 0, 
+            "profileId": 0,
+            "__v": 0,
+            "updatedAt": 0,
+            "createdAt": 0,
         }
     });
 
@@ -156,8 +156,8 @@ export const aggrigatorForCustomer = ({ name, isVerified, skip, pageLimit, locat
     if (specialization.length > 0) {
         pipeLine.push({
             $match: {
-                "specialization": { 
-                    $in: specialization.map(spec => new RegExp(spec, "i")) 
+                "specialization": {
+                    $in: specialization.map(spec => new RegExp(spec, "i"))
                 }
             }
         });
@@ -175,13 +175,13 @@ export const aggrigatorForCustomer = ({ name, isVerified, skip, pageLimit, locat
     }
     pipeLine.push({
         $project: {
-            "profileId": 0, 
-            "__v": 0, 
-            "updatedAt": 0, 
-            "createdAt": 0, 
-            "licenceImage": 0, 
-            "isVerified": 0, 
-            "licenceExpiryDate": 0, 
+            "profileId": 0,
+            "__v": 0,
+            "updatedAt": 0,
+            "createdAt": 0,
+            "licenceImage": 0,
+            "isVerified": 0,
+            "licenceExpiryDate": 0,
             "licenceNumber": 0
         }
     });

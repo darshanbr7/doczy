@@ -1,131 +1,137 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import SideNavbar from "../mutual/SideNavbar";
-import { getSlots, paymentPageOpen } from "../../slices/slotSlice"
-import {  createCustomerSecret } from "../../slices/paymentSlice"
-import Payment from "../mutual/Payment";
+import { getSlots, paymentPageOpen } from "../../slices/slotSlice";
+import { createCustomerSecret } from "../../slices/paymentSlice";
+import { doctorInfo } from "../../slices/customerSlice";
+import Spinner from "../mutual/Spinner";
 
-const BookAppontment = () => {
-    const location = useLocation();
+const BookAppointment = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { state } = location;
-    const { slots, serverError, isOpen } = useSelector(state => state.slot);
-    const  { userInfo } = useSelector( state =>  state.auth)
+    const location = useLocation();
+    const { slots, serverError, isLoading } = useSelector(state => state.slot);
+    const { doctorDetails } = useSelector(state => state.customer);
+
     const [formData, setFormData] = useState({
         date: format(new Date(), "yyyy-MM-dd"),
         time: "",
-    })
-    const [clientError, setClientError] = useState(null);
+    });
+
+    const [dates, setDates] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     useEffect(() => {
-        if (!state) {
-            navigate("/find-doctors")
+        const queryParams = new URLSearchParams(location.search);
+        const doctorId = queryParams.get("doctorId");
+        if (doctorId) {
+            dispatch(doctorInfo(doctorId));
+            dispatch(getSlots({ doctorId, date: formData.date }));
+        } else {
+            navigate("/find-doctors");
         }
-    }, [state, slots])
-    const hanldeGetSlots = (e) => {
-        e.preventDefault();
-        dispatch(getSlots({ doctorId: state, date: formData.date }));
-    }
-    const handleBookAppintment = ( ) => {
-        if( formData.time ){
-            dispatch( createCustomerSecret( {amount : 10000 }))
-            dispatch( paymentPageOpen() );
-            navigate( "/payment")
-            
-        }else {
-            toast.warning( "Slot need to selected")
+
+        const generateDates = () => {
+            const today = new Date();
+            const endOfMonthDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            const datesArray = [];
+            let currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            while (currentDate <= endOfMonthDate) {
+                datesArray.push(currentDate);
+                currentDate = addDays(currentDate, 1);
+            }
+            setDates(datesArray);
+        };
+        generateDates();
+
+    }, [location.search, formData.date,]);
+
+    const handleNext = () => {
+        if (currentIndex + 3 < dates.length) {
+            setCurrentIndex(currentIndex + 3);
         }
-    }
+    };
+
+    const handlePrev = () => {
+        if (currentIndex - 3 >= 0) {
+            setCurrentIndex(currentIndex - 3);
+        }
+    };
+
+    const handleDateChange = (selectedDate) => {
+        setFormData({ ...formData, date: format(selectedDate, "yyyy-MM-dd") });
+        dispatch(getSlots({ date: format(selectedDate, "yyyy-MM-dd") }));
+    };
+
+    const handleSlotSelection = (time) => {
+        setFormData({ ...formData, time });
+    };
+
+    const handleBookAppointment = () => {
+        if (formData.time) {
+            dispatch(createCustomerSecret({ amount: 5000 })); // Example amount
+            dispatch(paymentPageOpen());
+        } else {
+            toast.warning("Please select a slot.");
+        }
+    };
+
     return (
-        <div className="flex bg-gradient-to-r from-blue-100 to-gray-200 min-h-screen">
-            <div className="w-auto p-4 ">
+        <div className="flex min-h-screen from-blue-50 to-blue-200">
+            {isLoading && <Spinner />}
+            <div className="w-auto p-4">
                 <SideNavbar />
             </div>
-            <div>
-            </div>
-            <div className="flex flex-row">
-                <div className="w-full p-8 ">
-                    <div className=" mb-8">
-                        <h1 className="text-3xl font-semibold text-gray-800">Book your Appointment</h1>
+            <div className="flex w-auto">
+                <div className="flex flex-col bg-slate-100 mt-4 rounded-sm w-auto h-72 p-8">
+                    <div className="flex border-b border-black">
+                        <img src={doctorDetails?.profileId?.avatar} alt="Profile" className="mt-6 h-32 w-32 rounded-full p-2" />
+                        <div className="p-3">
+                            <p className="font-semibold my-3 mx-3">{doctorDetails?.userId?.name}</p>
+                            <p className="text-sm m-1 font-semibold mt-3">
+                                <span className="ml-2 opacity-80">{doctorDetails?.yearsOfExperience} years experience overall</span>
+                            </p>
+                            {doctorDetails?.specialization[0].split(",").map((ele, i) => (
+                                <p key={i} className="ml-3 text-sm font-semibold opacity-85">{ele}</p>
+                            ))}
+                            <p className="text-sm m-1 font-semibold mt-1">
+                                <span className="ml-2 opacity-80">{doctorDetails?.address?.street} {doctorDetails?.address?.city}</span>
+                            </p>
+                            <p className="text-sm m-1 font-semibold mt-3">
+                                <span className="ml-2 opacity-80">₹ {doctorDetails?.consultationFee} Consultation fee at clinic</span>
+                            </p>
+                        </div>
                     </div>
-
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <form onSubmit={hanldeGetSlots}>
-                            <div className="mb-6">
-                                <label htmlFor="date" className="text-sm font-medium text-gray-700 mb-2 block">
-                                    Select Date:
-                                </label>
-                                <input
-                                    type="date"
-                                    id="date"
-                                    value={formData.date}
-                                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                    className={`${clientError?.date ? "border-2 border-red-400" : "border-gray-300"
-                                        } w-full px-4 py-2 font-semibold rounded-lg shadow-sm focus:outline-none text-sm`}
-                                    min={new Date(Date.now()).toISOString().split('T')[0]}
-                                />
-                                {clientError?.date && (
-                                    <p className="text-red-400 text-xs mt-2">Please select a valid date.</p>
-                                )}
+                    <div className="flex justify-end mt-2  pb-2">
+                        <p className="cursor-pointer hover:underline hover:text-blue-500">Patient Stories</p>
+                    </div>
+                    <div className="mt-4 text-center">
+                        <div className="flex items-center justify-center mt-4">
+                            <FaAngleLeft className="cursor-pointer" onClick={handlePrev} />
+                            <div className="flex space-x-4 mx-4">
+                                {dates.slice(currentIndex, currentIndex + 3).map((date, index) => (
+                                    <div key={index} className="flex flex-col items-center px-4 py-2 bg-white rounded shadow text-gray-700">
+                                        <span>
+                                            {format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
+                                                ? "Today"
+                                                : format(date, 'yyyy-MM-dd') === format(addDays(new Date(), 1), 'yyyy-MM-dd')
+                                                    ? "Tomorrow"
+                                                    : format(date, 'dd MMM')}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
-                            <div className="mt-4">
-                                <input
-                                    type="submit"
-                                    value="GetSlots"
-                                    className="w-full bg-blue-500 text-white py-2  cursor-pointer rounded-lg font-semibold hover:bg-blue-600 focus:outline-none"
-                                />
-                            </div>
-                        </form>
+                            <FaAngleRight className="cursor-pointer" onClick={handleNext} />
+                        </div>
                     </div>
                 </div>
-                <div className="flex p-3 ml-20 mr-5 mt-5">
-                    <div className="bg-white rounded-lg shadow-lg p-8  w-[400px] min-h-[300px] max-h-[500px] overflow-y-auto overflow-x-hidden">
-                        <p className="text-lg font-semibold mb-4">Slots are :</p>
-                        <div className="grid grid-cols-3 gap-4">
-                            {slots?.map((ele, i) => {
-                                if (ele.booked === false) {
-                                    return (
-                                        <div
-                                            key={i}
-                                            className={`${formData.time === ele.time ? "bg-green-500" : "bg-yellow-500"
-                                                } relative flex text-sm justify-center items-center text-white font-semibold cursor-pointer rounded-lg py-3 px-4 text-center`}
-                                            onClick={() => setFormData({ ...formData, time: ele.time })}
-                                        >
-                                            {ele.time}
-                                        </div>
-
-                                    );
-                                }
-                                return null;
-                            })}
-                        </div>
-
-                        <div className="mt-2">
-                            {
-                                serverError && serverError.map((ele, i) => {
-                                    return <li key={i} className="text-sm font-semibold text-red-500 opacity-80"> {ele.msg}</li>
-                                })
-                            }
-                        </div>
-                        <div className="flex justify-center items-center  mt-8">
-                            <button
-                            onClick={ handleBookAppintment }
-                                className={`${slots.length === 0 ? "bg-red-400" : "bg-cyan-600"} px-4 py-2 rounded-sm font-semibold text-white cursor-pointer hover:scale-110`}
-                            >
-                                Book Appointment
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
             </div>
-            
-
         </div>
+    );
+};
 
-    )
-}
-export default BookAppontment;
+export default BookAppointment;

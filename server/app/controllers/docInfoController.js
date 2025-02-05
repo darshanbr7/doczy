@@ -126,7 +126,7 @@ docInfoController.list = async (req, res) => {
         res.json({
             data: response,
             total,
-            page : Number( page ),
+            page: Number(page),
             totalPages: Math.ceil(total / pageLimit)
         });
     } catch (error) {
@@ -153,10 +153,16 @@ docInfoController.verify = async (req, res) => {
     }
 }
 
+/**
+ * This  function handles fetching a list of doctors based on the given query parameters which are vrified by admin.
+ * 
+ * @param {Object} req - The request object containing query parameters (`name`, `location`, `expertIn`, `page`, `limit`).
+ * @param {Object} res - The response object used to send the response to the client.
+ */
 docInfoController.availableForCustomer = async (req, res) => {
     try {
-        const { name, location, expertIn , page, limit } = _.pick(req.query, ["name", "location", "expertIn", "page", "limit"]); 
-        const specialization = expertIn 
+        const { name, location, expertIn, page, limit } = _.pick(req.query, ["name", "location", "expertIn", "page", "limit"]);
+        const specialization = expertIn
         const isVerified = true;
         const pageNumber = parseInt(page) || 1;
         const pageLimit = parseInt(limit) || 2;
@@ -167,11 +173,11 @@ docInfoController.availableForCustomer = async (req, res) => {
         const response = await DocInfo.aggregate(pipeLine);
         const total = await DocInfo.countDocuments({
             isVerified,
-            ...(name && { "user.name": { $regex: name, $options: "i" } }),  
+            ...(name && { "user.name": { $regex: name, $options: "i" } }),
             ...(location && {
                 $or: [
-                    { "address.city": { $regex: location, $options: "i" } },  
-                    { "address.street": { $regex: location, $options: "i" } } 
+                    { "address.city": { $regex: location, $options: "i" } },
+                    { "address.street": { $regex: location, $options: "i" } }
                 ]
             })
         });
@@ -179,7 +185,7 @@ docInfoController.availableForCustomer = async (req, res) => {
         res.json({
             data: response,
             total,
-            page : Number( page ) || 1,
+            page: Number(page) || 1,
             totalPages: Math.ceil(total / pageLimit)
         });
 
@@ -188,6 +194,37 @@ docInfoController.availableForCustomer = async (req, res) => {
         return res.status(500).json({ error: [{ msg: "Something went wrong while getting doctor info " }] })
     }
 }
+
+/**
+ * This function used to retrieves a single doctor's information based on the provided doctorId.
+ *
+ * @param {Object} req - Express request object containing doctorId in query parameters.
+ * @param {Object} res - Express response object to return the doctor's details or errors.
+ *
+ * @returns {Object} - JSON response with doctor details or an error message.
+ */
+docInfoController.getSingleDoctorInfo = async (req, res) => {
+    try {
+        const { doctorId } = _.pick(req.query, ["doctorId"]);
+        const response = await DocInfo.findOne({ userId: doctorId })
+            .populate({
+                path: "userId",
+                select: "name"
+            })
+            .populate({
+                path: "profileId",
+                select: "avatar"
+            });
+        
+        if (!response) {
+            return res.status(404).json({ error: [{ msg: "Doctor not found" }] });
+        }
+        
+        res.json(response);
+    } catch (error) {
+        return res.status(500).json({ error: [{ msg: "Something went wrong while getting doctor information" }] });
+    }
+};
 
 export default docInfoController;
 

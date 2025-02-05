@@ -58,6 +58,7 @@ function App() {
       <div className="flex-grow">
         {/* Ensures the footer always stays at the bottom without causing overflow. */}
         <Routes>
+          
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login /> } />
           <Route path="/register" element={ <Register />} />
@@ -66,13 +67,14 @@ function App() {
           <Route path='/profile' element={<PrivateRoute> <Profile /></PrivateRoute>} />
           <Route path='/dashboard' element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />
           <Route path='/contact' element={<PrivateRoute permittedRoles={["customer", "doctor"]}> <Contact /></PrivateRoute>} />
-          <Route path='/payment' element={<Elements stripe={stripePromise}> <PrivateRoute permittedRoles={["customer", "doctor"]}> <Payment /></PrivateRoute></Elements>} />
+          <Route path='/payment' element={ <PrivateRoute permittedRoles={["customer", "doctor"]}> <Payment /></PrivateRoute> }/>
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />
-          <Route path='/book-appointment' element={<PrivateRoute permittedRoles={["customer"]}> <BookAppontment /></PrivateRoute>} />
+          <Route path='/book-appointment' element={<PrivateRoute permittedRoles={["customer"]}> <Elements stripe={stripePromise}> <BookAppontment /> </Elements> </PrivateRoute>} />
           <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
           <Route path='*'  element = { <NotFound/> }/>
+
         </Routes>
       </div>
       {showFooter.includes(location.pathname) && <Footer />}

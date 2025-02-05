@@ -25,6 +25,10 @@ doctorRoute.get( "/list", authentication, authorization( [ "admin" ] ), docInfoC
 //Route for the updating the doctor  verification status
 doctorRoute.put( "/verify", authentication, authorization( [ "admin" ]),checkSchema( { doctor : userId } ),inputValidator, docInfoController.verify )
 
-doctorRoute.get( "/listed", authentication, authorization( ["customer"]), docInfoController.availableForCustomer )
+// Route for the customer, the doctors who are all approved by the admin
+doctorRoute.get( "/listed", authentication, authorization( ["customer"]), docInfoController.availableForCustomer );
+
+// Route to get the single doctor information;
+doctorRoute.get( "/profile", authentication, authorization( ["customer"]), checkSchema( { doctorId :userId } ), inputValidator, docInfoController.getSingleDoctorInfo )
 
 export default doctorRoute;
