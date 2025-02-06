@@ -4,7 +4,7 @@ import axiosInstance from "../utils/axiosInstance";
 
 export const createSlots = createAsyncThunk("posts/generateSlots", async (formData, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.post("/slots/create", formData, {
+        await axiosInstance.post("/slots/create", formData, {
             headers: {
                 Authorization: localStorage.getItem("token")
             }
@@ -35,6 +35,7 @@ const slotSlice = createSlice({
         isLoading: false,
         serverError: null,
         isOpen: false,
+        detailsPageOpen : false,
         slots: []
     },
     reducers: {
@@ -43,6 +44,9 @@ const slotSlice = createSlice({
         },
         paymentPageClose: (state) => {
             state.isOpen = false;
+        },
+        setDetailsPageOpen : ( state ) => {
+            state.detailsPageOpen = true;
         },
         setPaymentProcessing: (state, action) => {
             state.paymentProcessing = action.payload;
@@ -80,5 +84,5 @@ const slotSlice = createSlice({
     }
 })
 
-export const { paymentPageOpen, paymentPageClose, setPaymentError, setPaymentProcessing } = slotSlice.actions;
+export const { paymentPageOpen, paymentPageClose, setPaymentError, setPaymentProcessing, setDetailsPageOpen } = slotSlice.actions;
 export default slotSlice.reducer;
