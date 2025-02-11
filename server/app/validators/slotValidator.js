@@ -1,5 +1,5 @@
 import { userId } from "./queryConstants.js"
-const date = {
+export const date = {
     in: ["body"],
     exists: {
         errorMessage: "Date field is required"
