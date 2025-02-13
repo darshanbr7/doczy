@@ -2,7 +2,7 @@ import Appointment from "../models/appointmentModel.js";
 import _ from "lodash";
 import Slot from "../models/slotModel.js";
 import mailSender from "../helpers/userControllerHelpers/mailSender.js";
-import { APPOINTMENT_CONFIRMATION_TEMPLATE } from "../helpers/appointmentControllerHelper/mailTemplets.js"
+import { APPOINTMENT_CONFIRMATION_TEMPLATE, APPOINTMENT_CANCELLATION_TEMPLATE } from "../helpers/appointmentControllerHelper/mailTemplets.js"
 import findDoctorSlots from "../helpers/appointmentControllerHelper/findDoctorSlots.js";
 
 const appointmentController = {};
@@ -38,9 +38,14 @@ appointmentController.myAppointments = async (req, res) => {
 
 appointmentController.cancelAppointment = async (req, res) => {
     try {
-        const { appointmentId } = _.pick(req.params, ["appointmentId"])
+        const { name, email } = _.pick( req.currentUser, [ "name", "email"])
+        const { appointmentId } = _.pick(req.query, ["appointmentId"])
         console.log( appointmentId );
-        const appointment = await Appointment.findById(appointmentId);
+        const appointment = await Appointment.findOneAndUpdate(
+            { _id: appointmentId }, 
+            { $set: { status: "cancelled" } },
+            { new: true , runValidators : true } 
+        );
         if (!appointment) {
             return res.status(404).json({ error: [{ msg: "Appointment not found" }] });
         }
@@ -50,9 +55,16 @@ appointmentController.cancelAppointment = async (req, res) => {
         if (timeDifference < 12 * 60 * 60 * 1000) {
             return res.status(400).json({ error: [{ msg: "Cancellation can only be done at least 12 hours before the appointment" }] });
         }
+        
         await findDoctorSlots( appointment.doctorId, appointment.appointmentDate, appointment.appointmentTime, false );
-        await doctorSlots.save();
+        let templet = APPOINTMENT_CANCELLATION_TEMPLATE
+            .replace("{customerName}", name)
+            .replace("{appointmentDate}", appointment.appointmentDate)
+            .replace("{appointmentTime}", appointment.appointmentTime);
+        await mailSender(email, "Appointment Cancellation Confirmation", templet);
+        res.json({ msg: "Appointment successfully cancelled" });
     } catch (error) {
+        console.log( error )
         return res.status(500).json({ error: [{ msg: "Something went wrong while cancelling yours Appointment " }] })
     }
 }

@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import corn from "node-cron";
 import authRoutes from "./config/routes/authRoute.js";
 import profileRoute from "./config/routes/profileRoute.js";
 import doctorRoute from "./config/routes/doctorRoute.js"
@@ -9,6 +10,7 @@ import specializationRoute from "./config/routes/specializationRoute.js";
 import appointmentRoute from "./config/routes/appointmentRoute.js";
 import paymentRoute from "./config/routes/paymentRoute.js"
 import dbConnect from "./config/db/dbConnection.js";
+import appointmentReminder from "./app/helpers/appointmentControllerHelper/appointmentReminder.js";
 
 // Load environment variables from a .env file and make it available on process object
 dotenv.config(); 
@@ -34,6 +36,9 @@ app.use( "/api/payment", paymentRoute );
 //appointment related routes
 app.use( "/api/appointment", appointmentRoute );
 
+corn.schedule( '0 0 * * *' , ( ) => {
+    appointmentReminder();
+})
 // Start the server and listen on the specified port
 app.listen ( port, ( ) => {
     dbConnect(); 

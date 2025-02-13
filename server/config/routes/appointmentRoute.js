@@ -14,4 +14,6 @@ appointmentRoute.post( "/create", authentication, authorization(["customer"]),  
 
 appointmentRoute.get( "/list", authentication, authorization(["customer"]),   appointmentController.myAppointments );
 
+appointmentRoute.put( "/cancel", authentication, authorization(["customer"]),   appointmentController.cancelAppointment );
+
 export default appointmentRoute;
