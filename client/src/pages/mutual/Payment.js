@@ -6,12 +6,13 @@ import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcEl
 import Spinner from "./Spinner";
 import { toast } from "react-toastify";
 
-const Payment = ({ formData }) => {
+const Payment = ({ amount, formData, doctorId }) => {
     const dispatch = useDispatch();
     const stripe = useStripe();
     const elements = useElements();
-    console.log( formData.payableAmount )
-   
+    console.log("amount", amount );
+    console.log( "formdata", formData)
+    console.log( "doctorId", doctorId)
     
     const { isLoading, clientSecret, paymentError, paymentProcessing } = useSelector((state) => state.payment);
 
@@ -65,13 +66,14 @@ const Payment = ({ formData }) => {
                 <div className=" flex justify-center items-center"><p className="text-2xl font-semibold opacity-85"> Payment Page</p></div>
                 <div>
                     <p className="my-2 font-semibold opacity-85"> Payment Details</p>
-                    <p className="text-sm font-semibold mb-2"> Total Amount : { formData.payableAmount} </p>
+                    <p className="text-sm font-semibold mb-2"> Total Amount : { amount } </p>
                 </div>
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
                         <div className="border rounded-lg p-3">
                             <CardNumberElement
+                                autoFocus={true}
                                 className="w-full focus:outline-none font-semibold focus:ring-2 focus:ring-blue-500"
                             />
                         </div>

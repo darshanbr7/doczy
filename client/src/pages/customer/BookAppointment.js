@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { format, addDays } from "date-fns";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import SideNavbar from "../mutual/SideNavbar";
-import { getSlots, paymentPageOpen, setDetailsPageOpen } from "../../slices/slotSlice";
-import { createCustomerSecret } from "../../slices/paymentSlice";
+import { getSlots, setDetailsPageOpen } from "../../slices/slotSlice";
 import { doctorInfo } from "../../slices/customerSlice";
 import Spinner from "../mutual/Spinner";
 import AppointmentDetails from "./AppointmentDetails";
@@ -63,7 +61,7 @@ const BookAppointment = () => {
     };
 
     const handleDateChange = (selectedDate) => {
-        setFormData({ ...formData, date: format(selectedDate, "yyyy-MM-dd") });
+        setFormData({ ...formData, date: format(selectedDate, "yyyy-MM-dd"), time : "" });
         dispatch(getSlots({ doctorId, date: format(selectedDate, "yyyy-MM-dd") }));
     };
 
@@ -71,14 +69,7 @@ const BookAppointment = () => {
         dispatch( setDetailsPageOpen() );
         setFormData({ ...formData, time });
     };
-    const handleBookAppointment = () => {
-        if (formData.time) {
-            dispatch(createCustomerSecret({ amount: doctorDetails.consultationFee })); 
-            dispatch(paymentPageOpen());
-        } else {
-            toast.warning("Please select a slot.");
-        }
-    };
+    
 
     return (
         <div className="flex min-h-screen from-blue-50 to-blue-200">
@@ -120,7 +111,10 @@ const BookAppointment = () => {
                                     <div
                                         key={index}
                                         onClick={() => handleDateChange(date)}
-                                        className="flex flex-col items-center px-4 py-2 bg-white rounded shadow text-gray-700 cursor-pointer">
+                                        className={`${
+                                            format(date, "yyyy-MM-dd") === formData.date ? "bg-blue-300 text-white" : "bg-white text-gray-700 "
+                                          } flex flex-col items-center px-4 py-2 rounded shadow cursor-pointer`}
+                                        >
                                         <span className=" text-sm font-semibold">
                                             {format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
                                                 ? "Today"
@@ -152,7 +146,7 @@ const BookAppointment = () => {
                             {
                                 slots.length === 0 &&
                                 <div className="flex justify-center items-center mt-4">
-                                    <p className="text-red-500 text-sm">Slots are not created</p>
+                                    <p className="text-red-500 text-sm">Slots are not created by doctor</p>
                                 </div>
                             }
 
@@ -165,9 +159,6 @@ const BookAppointment = () => {
                 </div>
             </div>
         </div>
-
-
-
     );
 };
 

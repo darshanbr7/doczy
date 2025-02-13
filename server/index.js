@@ -6,6 +6,7 @@ import profileRoute from "./config/routes/profileRoute.js";
 import doctorRoute from "./config/routes/doctorRoute.js"
 import slotRouter from "./config/routes/slotRoute.js";
 import specializationRoute from "./config/routes/specializationRoute.js";
+import appointmentRoute from "./config/routes/appointmentRoute.js";
 import paymentRoute from "./config/routes/paymentRoute.js"
 import dbConnect from "./config/db/dbConnection.js";
 
@@ -30,6 +31,8 @@ app.use( "/api/specialization", specializationRoute );
 app.use( "/api/slots", slotRouter );
 //payment related routes
 app.use( "/api/payment", paymentRoute );
+//appointment related routes
+app.use( "/api/appointment", appointmentRoute );
 
 // Start the server and listen on the specified port
 app.listen ( port, ( ) => {

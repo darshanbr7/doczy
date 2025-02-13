@@ -10,6 +10,7 @@ export const createCustomerSecret  = createAsyncThunk( "post/paymentCustomerId",
         })
         return response.data.clientSecret
     } catch (error) {
+        console.log( error );
         return rejectWithValue( error?.response?.data?.error );
     }
 })

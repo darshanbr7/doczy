@@ -34,16 +34,16 @@ const slotSlice = createSlice({
     initialState: {
         isLoading: false,
         serverError: null,
-        isOpen: false,
+        paymentPageIsOpen: false,
         detailsPageOpen : false,
         slots: []
     },
     reducers: {
         paymentPageOpen: (state) => {
-            state.isOpen = true;
+            state.paymentPageIsOpen = true;
         },
         paymentPageClose: (state) => {
-            state.isOpen = false;
+            state.paymentPageIsOpen = false;
         },
         setDetailsPageOpen : ( state ) => {
             state.detailsPageOpen = true;

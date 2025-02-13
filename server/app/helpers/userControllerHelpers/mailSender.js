@@ -24,7 +24,6 @@ const mailSender = async ( email, subject, templet ) => {
         if( !info ){
             throw new Error ( "something went wrong in mail config")
         }
-        console.log( "mail sent succesfully")
     } catch (error) {
         throw new Error( error.message );
     }

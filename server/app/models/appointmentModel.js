@@ -3,7 +3,8 @@ import { model, Schema } from "mongoose";
 const appointmentSchema = new Schema( {
     userId : {
         type : Schema.Types.ObjectId,
-        ref : "User"
+        ref : "User",
+        required : true
     },
     doctorId : {
         type : Schema.Types.ObjectId,
