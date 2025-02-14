@@ -1,5 +1,16 @@
 import Slot from "../../models/slotModel.js";
 
+/**
+ * This function is used finds and updates the booking status of a specific time slot for a doctor on a given date.
+ * This function is responsible for either booking or cancelling an appointment for a specific time slot.
+ * @param {ObjectId} doctorId - The ID of the doctor for whom the slot is being booked or cancelled.
+ * @param {Date} date - The date for which the slot needs to be booked or cancelled.
+ * @param {string} appointmentTime - The time of the appointment to be booked or cancelled.
+ * @param {boolean} status - `true` if booking the appointment, `false` if cancelling the appointment.
+ * @returns {Promise<boolean>} Resolves to `true` if the slot is successfully updated; otherwise, throws an error.
+ * @throws {Error} Throws an error if no slots are found, if the time slot is not available, or if the status can't be updated.
+ */
+
 const findDoctorSlots = async (doctorId, date, appointmentTime, status) => {
     try {
         const targettedDate = new Date(date);

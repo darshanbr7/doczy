@@ -2,6 +2,12 @@ import { format, startOfDay, addDays } from 'date-fns';
 import Appointment from '../../models/appointmentModel.js';
 import { REMINDER_EMAIL_TEMPLATE } from './mailTemplets.js';
 import mailSender from '../userControllerHelpers/mailSender.js';
+
+/**
+ *  This function is used to sends appointment reminder emails to customers for appointments scheduled on the next day.
+ * @returns {Promise<void>} Resolves when all emails have been sent or logs any errors.
+*/
+
 const appointmentReminder = async () => {
     try {
         const todayStart = startOfDay(new Date());

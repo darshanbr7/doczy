@@ -36,6 +36,7 @@ app.use( "/api/payment", paymentRoute );
 //appointment related routes
 app.use( "/api/appointment", appointmentRoute );
 
+// runninng corn job at 12:00 AM everyday
 corn.schedule( '0 0 * * *' , ( ) => {
     appointmentReminder();
 })

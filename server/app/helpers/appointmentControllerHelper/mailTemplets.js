@@ -1,3 +1,7 @@
+/**
+ * HTML template for sending an email for Appointment booking confrmation.
+ * @constant {string} APPOINTMENT_CONFIRMATION_TEMPLATE - The HTML string containing the email template.
+*/
 export const APPOINTMENT_CONFIRMATION_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +39,10 @@ export const APPOINTMENT_CONFIRMATION_TEMPLATE = `
 </html>
 `;
 
+/**
+ * HTML template for sending an email for Appointment cancellation confrmation.
+ * @constant {string} APPOINTMENT_CANCELLATION_TEMPLATE - The HTML string containing the email template.
+*/
 export const APPOINTMENT_CANCELLATION_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
@@ -69,6 +77,10 @@ export const APPOINTMENT_CANCELLATION_TEMPLATE = `
 </html>
 `;
 
+/**
+ * HTML template for sending an email for Appointment Reminder confrmation.
+ * @constant {string} REMINDER_EMAIL_TEMPLATE - The HTML string containing the email template.
+*/
 export const REMINDER_EMAIL_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
