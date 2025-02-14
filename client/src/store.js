@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice";
 import detailsReducer from "./slices/doctorDetailsSlice";
@@ -6,6 +7,7 @@ import verifyDoctorReducer from "./slices/doctorVerifySlice";
 import slotReducer from "./slices/slotSlice";
 import customerReducer from "./slices/customerSlice";
 import paymentReducer from "./slices/paymentSlice";
+import reviewReducer from "./slices/reviewSlice";
 
 const store = configureStore( {
     reducer : {
@@ -15,7 +17,8 @@ const store = configureStore( {
         VerifyDoctors : verifyDoctorReducer,
         slot : slotReducer,
         customer : customerReducer,
-        payment : paymentReducer
+        payment : paymentReducer,
+        review : reviewReducer
     }
 })
 

@@ -29,9 +29,11 @@ import VerifyDoctors from './pages/admin/VerifyDoctors';
 
 import Details from "./pages/doctor/Details";
 import GenerateSlots from './pages/doctor/GenerateSlots';
+import CustomerReviews from './pages/doctor/CustomerReviews';
 
 import FindDoctors from "./pages/customer/FindDoctors"
 import BookAppontment from './pages/customer/BookAppointment';
+import AppointmentHistory from './pages/customer/AppointmentHistory';
 
 
 function App() {
@@ -53,7 +55,7 @@ function App() {
     return <Spinner />
   }
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col  ">
       <Navbar />
       <div className="flex-grow">
         {/* Ensures the footer always stays at the bottom without causing overflow. */}
@@ -71,6 +73,8 @@ function App() {
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />
+          <Route path='/appointment-history' element={<PrivateRoute permittedRoles={["customer"]}> <AppointmentHistory /></PrivateRoute>} />
+          <Route path='/customer-reviews' element={<PrivateRoute permittedRoles={["customer"]}> <CustomerReviews /></PrivateRoute>} />
           <Route path='/book-appointment' element={<PrivateRoute permittedRoles={["customer"]}> <Elements stripe={stripePromise}> <BookAppontment /> </Elements> </PrivateRoute>} />
           <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
           <Route path='*'  element = { <NotFound/> }/>

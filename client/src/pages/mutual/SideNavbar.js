@@ -7,6 +7,7 @@ import { IoReorderThree } from "react-icons/io5";
 import { FaRegUserCircle, FaBusinessTime } from "react-icons/fa";
 import { TiDocumentText } from "react-icons/ti";
 import { FaUserDoctor } from "react-icons/fa6";
+import { MdOutlineWorkHistory } from "react-icons/md";
 import { logout } from "../../slices/authSlice";
 
 
@@ -41,6 +42,10 @@ const SideNavbar = ( ) => {
             {userInfo.role === "customer" && <p className="  p-4 flex text-bold cursor-pointer ">
                 <Link to="/find-doctors" className="flex items-center space-x-2" ><FaUserDoctor  color="black" size={25} /> 
                 {isExpanded && <span className="ml-2 font-semibold text-sm text-blue-500"> Doctors </span>}</Link>
+            </p>}
+            {userInfo.role === "customer" && <p className="  p-4 flex text-bold cursor-pointer ">
+                <Link to="/appointment-history" className="flex items-center space-x-2" ><MdOutlineWorkHistory  color="black" size={25} /> 
+                {isExpanded && <span className="ml-2 font-semibold text-sm text-blue-500"> History </span>}</Link>
             </p>}
             {userInfo.role === "admin" && <p className="  p-4 flex text-bold cursor-pointer ">
                 <Link to="/verify-doctors" className="flex items-center space-x-2" ><FaUserDoctor  color="black" size={25} /> 

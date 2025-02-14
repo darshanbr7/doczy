@@ -5,15 +5,14 @@ import { paymentPageClose, setPaymentError, setPaymentProcessing } from "../../s
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import Spinner from "./Spinner";
 import { toast } from "react-toastify";
+import { bookAppointment } from "../../slices/paymentSlice";
+import { useNavigate } from "react-router-dom";
 
 const Payment = ({ amount, formData, doctorId }) => {
+    const navigate = useNavigate()
     const dispatch = useDispatch();
     const stripe = useStripe();
     const elements = useElements();
-    console.log("amount", amount );
-    console.log( "formdata", formData)
-    console.log( "doctorId", doctorId)
-    
     const { isLoading, clientSecret, paymentError, paymentProcessing } = useSelector((state) => state.payment);
 
     useEffect(() => {
@@ -33,6 +32,7 @@ const Payment = ({ amount, formData, doctorId }) => {
         if (!cardNumber || !cardExpiry || !cardCvc) {
             setPaymentError("Missing card details.");
             setPaymentProcessing(false);
+            navigate("/find-doctors")
         }
 
         const { error, paymentIntent } = await stripe.confirmCardPayment(
@@ -47,9 +47,14 @@ const Payment = ({ amount, formData, doctorId }) => {
         if (error) {
             setPaymentError(error.message);
             setPaymentProcessing(false);
+            toast.warning("Payment was failed");
         } else if (paymentIntent.status === 'succeeded') {
+            const actionResult = await dispatch(bookAppointment({ doctorId, appointmentDate: formData.date, appointmentTime: formData.time, consultationFee: amount, paymentMethod: "online" }));
             setPaymentProcessing(false);
-            toast.success("Payment was successful");
+            if (actionResult.type = bookAppointment.fulfilled.type) {
+                toast.success("Payment was successful");
+                dispatch(paymentPageClose());
+            }
         }
     };
 
@@ -66,7 +71,7 @@ const Payment = ({ amount, formData, doctorId }) => {
                 <div className=" flex justify-center items-center"><p className="text-2xl font-semibold opacity-85"> Payment Page</p></div>
                 <div>
                     <p className="my-2 font-semibold opacity-85"> Payment Details</p>
-                    <p className="text-sm font-semibold mb-2"> Total Amount : { amount } </p>
+                    <p className="text-sm font-semibold mb-2"> Total Amount : {amount} </p>
                 </div>
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                     <div>

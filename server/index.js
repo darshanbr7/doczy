@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import corn from "node-cron";
+
 import authRoutes from "./config/routes/authRoute.js";
 import profileRoute from "./config/routes/profileRoute.js";
 import doctorRoute from "./config/routes/doctorRoute.js"
@@ -9,6 +10,8 @@ import slotRouter from "./config/routes/slotRoute.js";
 import specializationRoute from "./config/routes/specializationRoute.js";
 import appointmentRoute from "./config/routes/appointmentRoute.js";
 import paymentRoute from "./config/routes/paymentRoute.js"
+import reviewRoute from "./config/routes/reviewRoute.js";
+
 import dbConnect from "./config/db/dbConnection.js";
 import appointmentReminder from "./app/helpers/appointmentControllerHelper/appointmentReminder.js";
 
@@ -35,6 +38,8 @@ app.use( "/api/slots", slotRouter );
 app.use( "/api/payment", paymentRoute );
 //appointment related routes
 app.use( "/api/appointment", appointmentRoute );
+// review related routes
+app.use( "/api/review", reviewRoute );
 
 // runninng corn job at 12:00 AM everyday
 corn.schedule( '0 0 * * *' , ( ) => {

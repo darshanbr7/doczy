@@ -1,34 +1,40 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MdOutlineCalendarMonth, MdAccessTime } from "react-icons/md";
 import { format } from "date-fns";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createCustomerSecret } from "../../slices/paymentSlice";
+import { createCustomerSecret, bookAppointment } from "../../slices/paymentSlice";
 import { paymentPageOpen } from "../../slices/slotSlice";
 import { toast } from "react-toastify";
-import Payment from "../mutual/Payment"
+import Payment from "../mutual/Payment";
+import Spinner from "../mutual/Spinner";
 
 const AppointmentDetails = ({ formData, amount }) => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const  { paymentPageIsOpen }  = useSelector( state => state.slot);
+    const { paymentPageIsOpen } = useSelector(state => state.slot);
+    const { isLoading, serverError } = useSelector(state => state.payment)
     const [paymentOption, setPaymentOption] = useState("cash")
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const doctorId = queryParams.get("doctorId");
     const handleOnlinePayment = () => {
         if (formData.time) {
-            dispatch(createCustomerSecret({ amount : amount * 100}));
+            dispatch(createCustomerSecret({ amount: amount * 100 }));
             dispatch(paymentPageOpen());
         } else {
             toast.warning("Appointment time need to Selected")
         }
-        /*   */
     }
-    const hanldeBookAppointment = (e) => {
-
+    const hanldeBookAppointment = async(e) => {
+        const actionResult = await dispatch(bookAppointment({ doctorId, appointmentDate: formData.date, appointmentTime: formData.time, consultationFee: amount, paymentMethod: paymentOption }));
+        if( actionResult.type === bookAppointment.fulfilled.type ){
+            navigate("/find-doctors")
+        }
     }
     return (
         <div className="ml-8 mt-2 flex  flex-col p-3 w-10/12 h-auto bg-slate-100">
+            {isLoading && <Spinner />}
             <div className="px-4 ml-auto mr-auto">
                 <p className="font-semibold opacity-80"> Appointment Details </p>
 
@@ -67,7 +73,7 @@ const AppointmentDetails = ({ formData, amount }) => {
                         checked={paymentOption === "cash"}
                     />  ₹ {amount}  <span className="text-xs ml-3"> Pay later at clinic</span></label>
                 </div>
-                <div className=" flex justify-center mt-10">
+                <div className=" flex justify-center mt-10 mb-5 ">
                     {
                         paymentOption === "cash" && <button
                             onClick={hanldeBookAppointment}
@@ -79,6 +85,11 @@ const AppointmentDetails = ({ formData, amount }) => {
                             className="text-sm px-4 py-2 font-semibold bg-blue-400 cursor-pointer shadow-sm rounded-sm text-white hover:scale-110"> Pay Now</button>
                     }
                 </div>
+                {
+                    serverError && serverError.map((ele, i) => {
+                        return <li key={i} className="text-sm font-semibold text-red-500 opacity-80"> {ele.msg}</li>
+                    })
+                }
                 <div className="mt-8">
                     <p className=""> Safe and secure payments.</p>
                     <li className="text-sm mt-2"> No more billing queues, go cashless!</li>
@@ -87,7 +98,7 @@ const AppointmentDetails = ({ formData, amount }) => {
                 </div>
             </div>
             {
-                paymentPageIsOpen && <Payment amount={amount} formData = { formData } doctorId = {doctorId}/>
+                paymentPageIsOpen && <Payment amount={amount} formData={formData} doctorId={doctorId} />
             }
         </div>
     )

@@ -72,7 +72,7 @@ const BookAppointment = () => {
     
 
     return (
-        <div className="flex min-h-screen from-blue-50 to-blue-200">
+        <div className="flex min-h-screen bg-gradient-to-r from-blue-50 to-blue-200">
             {isLoading && <Spinner />}
             <div className="w-auto p-4">
                 <SideNavbar />
@@ -99,7 +99,9 @@ const BookAppointment = () => {
                             </div>
                         </div>
                         <div className="flex justify-end mt-3 mb-4">
-                            <p className="cursor-pointer hover:underline hover:text-blue-500">Patient Stories</p>
+                            <p 
+                            onClick={ () => { navigate(`/customer-reviews?doctorId=${doctorId}`)}}
+                            className="cursor-pointer hover:underline hover:text-blue-500">Patient Stories</p>
                         </div>
                     </div>
 

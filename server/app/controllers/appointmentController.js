@@ -1,6 +1,6 @@
 import Appointment from "../models/appointmentModel.js";
 import _ from "lodash";
-import Slot from "../models/slotModel.js";
+import { parse, differenceInMilliseconds, format } from "date-fns"
 import mailSender from "../helpers/userControllerHelpers/mailSender.js";
 import { APPOINTMENT_CONFIRMATION_TEMPLATE, APPOINTMENT_CANCELLATION_TEMPLATE } from "../helpers/appointmentControllerHelper/mailTemplets.js"
 import findDoctorSlots from "../helpers/appointmentControllerHelper/findDoctorSlots.js";
@@ -16,20 +16,20 @@ const appointmentController = {};
  */
 appointmentController.createAppointment = async (req, res) => {
     try {
-        const { doctorId, appointmentDate, appointmentTime } = _.pick(req.body, ["doctorId", "appointmentDate", "appointmentTime"]);
+        const { doctorId, appointmentDate, appointmentTime, consultationFee, paymentMethod } = _.pick(req.body, ["doctorId", "appointmentDate", "appointmentTime", "consultationFee", "paymentMethod"]);
         const { userId, name, email } = _.pick(req.currentUser, ["userId", "name", "email"]);
         await findDoctorSlots(doctorId, appointmentDate, appointmentTime, true)
-        const appointment = new Appointment({ userId, doctorId, appointmentDate, appointmentTime, userEmail: email });
+        const appointment = new Appointment({ userId, doctorId, appointmentDate, appointmentTime, userEmail: email, consultationFee, paymentMethod });
         let templet = APPOINTMENT_CONFIRMATION_TEMPLATE
             .replace("{customerName}", name)
-            .replace("{appointmentDate}", appointmentDate)
+            .replace("{appointmentDate}", format(new Date(appointmentDate), 'eee MMM dd yyyy'))
             .replace("{appointmentTime}", appointmentTime);
         await mailSender(email, "Appointment Booking Confirmation", templet);
         await appointment.save();
         res.json(appointment)
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error: [{ msg: "Something went wrong while creating doctor Appointment " }] })
+        return res.status(500).json({ error: [{ msg: error.message }] })
     }
 }
 
@@ -43,7 +43,9 @@ appointmentController.createAppointment = async (req, res) => {
 appointmentController.myAppointments = async (req, res) => {
     try {
         const { userId } = _.pick(req.currentUser, ["userId"]);
-        const appointments = await Appointment.find({ userId });
+        const appointments = await Appointment.find({ userId })
+            .sort({ createdAt: -1 })
+            .populate("doctorId", "name");
         res.json(appointments);
     } catch (error) {
         return res.status(500).json({ error: [{ msg: "Something went wrong while getting yours Appointments " }] })
@@ -61,31 +63,32 @@ appointmentController.cancelAppointment = async (req, res) => {
     try {
         const { name, email } = _.pick(req.currentUser, ["name", "email"])
         const { appointmentId } = _.pick(req.query, ["appointmentId"])
-        console.log(appointmentId);
-        const appointment = await Appointment.findOneAndUpdate(
+        const appointment = await Appointment.findOne({ _id: appointmentId });
+        if (!appointment) {
+            return res.status(404).json({ error: [{ msg: "Appointment not found" }] });
+        }
+        const appointmentDate = new Date(appointment.appointmentDate);
+        const appointmentTime = parse(`${appointment.appointmentTime}`, 'h:mm a', new Date())
+        appointmentDate.setHours(appointmentTime.getHours(), appointmentTime.getMinutes(), 0, 0);
+        const currentTime = new Date();
+        const timeDifference = differenceInMilliseconds(appointmentDate, currentTime);
+        if (timeDifference < 12 * 60 * 60 * 1000) {
+            return res.status(400).json({ error: [{ msg: "Cancellation can only be done at least 12 hours before the appointment" }] });
+        }
+        await findDoctorSlots(appointment.doctorId, appointment.appointmentDate, appointment.appointmentTime, false);
+        let templet = APPOINTMENT_CANCELLATION_TEMPLATE
+            .replace("{customerName}", name)
+            .replace("{appointmentDate}", format(appointment.appointmentDate, 'eee MMM dd yyyy'))
+            .replace("{appointmentTime}", appointment.appointmentTime);
+        await mailSender(email, "Appointment Cancellation Confirmation", templet);
+        const updatedAppointment = await Appointment.findOneAndUpdate(
             { _id: appointmentId },
             { $set: { status: "cancelled" } },
             { new: true, runValidators: true }
         );
-        if (!appointment) {
-            return res.status(404).json({ error: [{ msg: "Appointment not found" }] });
-        }
-        const appointmentTime = new Date(`${appointment.appointmentDate} ${appointment.appointmentTime}`);
-        const currentTime = new Date();
-        const timeDifference = appointmentTime - currentTime;
-        if (timeDifference < 12 * 60 * 60 * 1000) {
-            return res.status(400).json({ error: [{ msg: "Cancellation can only be done at least 12 hours before the appointment" }] });
-        }
-
-        await findDoctorSlots(appointment.doctorId, appointment.appointmentDate, appointment.appointmentTime, false);
-        let templet = APPOINTMENT_CANCELLATION_TEMPLATE
-            .replace("{customerName}", name)
-            .replace("{appointmentDate}", appointment.appointmentDate)
-            .replace("{appointmentTime}", appointment.appointmentTime);
-        await mailSender(email, "Appointment Cancellation Confirmation", templet);
-        res.json({ msg: "Appointment successfully cancelled" });
+        res.json(updatedAppointment);
     } catch (error) {
-        return res.status(500).json({ error: [{ msg: error.message}] })
+        return res.status(500).json({ error: [{ msg: error.message }] })
     }
 }
 

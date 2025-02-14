@@ -17,6 +17,11 @@ const appointmentSchema = new Schema( {
         enum : [ "pending", "completed", "cancelled" ],
         default : "pending"
     },
+    consultationFee :  Number,
+    paymentMethod : {
+        type : String,
+        enum : [ "online", "cash" ],
+    },
     userEmail : String
 }, { timestamps: true } )
 
