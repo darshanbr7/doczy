@@ -16,7 +16,6 @@ const appointmentReminder = async () => {
             appointmentDate: { $gte: todayStart, $lt: tomorrowStart },
             status: 'pending'
         }).populate("userId doctorId", "name");
-        console.log( appointments );
 
         appointments.forEach(async (appointment) => {
             const customerEmail = appointment.userEmail;

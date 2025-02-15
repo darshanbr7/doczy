@@ -2,6 +2,8 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { format } from "date-fns";
+import { Rating } from "@smastrom/react-rating";
+import "@smastrom/react-rating/style.css";
 import { allCustomerReviews } from "../../slices/reviewSlice";
 import SideNavbar from "../mutual/SideNavbar";
 import Spinner from "../mutual/Spinner";
@@ -13,21 +15,11 @@ const CustomerReviews = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const doctorId = queryParams.get("doctorId");
+    
     useEffect(() => {
         dispatch(allCustomerReviews(doctorId));
     }, [])
 
-    const renderStars = (rating) => {
-        let stars = [];
-        for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
-                stars.push(<span key={i} className="text-yellow-500">&#9733;</span>);
-            } else {
-                stars.push(<span key={i} className="text-gray-400">&#9733;</span>);
-            }
-        }
-        return stars;
-    };
     return (
         <div className="flex h-auto">
             {isLoading && <Spinner />}
@@ -45,8 +37,11 @@ const CustomerReviews = () => {
                             <div key={review._id} className="w-full bg-slate-100 mb-4 p-8 rounded-lg">
                                 <div className="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
                                     <div className="text-lg font-semibold text-blue-600">{review.userId.name}</div>
-                                    <div>
-                                        {renderStars(review.rating)}
+                                    <div className="max-w-32">
+                                        <Rating
+                                            readOnly
+                                            value={review.rating}
+                                        />
                                     </div>
                                 </div>
                                 <div className="text-gray-700">{review.description}</div>

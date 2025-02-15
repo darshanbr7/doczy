@@ -1,13 +1,16 @@
 import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { format, parse, differenceInMilliseconds } from "date-fns";
 import SideNavbar from "../mutual/SideNavbar";
 import Spinner from "../mutual/Spinner";
 import { getAppointments, cancelAppointment } from "../../slices/customerSlice";
-import { toast } from "react-toastify";
+
 
 const AppointmentHistory = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { isLoading, serverError, appointments } = useSelector(state => state.customer)
     useEffect(() => {
         dispatch(getAppointments());
@@ -84,7 +87,9 @@ const AppointmentHistory = () => {
                                         </button>
                                     )}
                                     {ele.status === 'completed' && (
-                                        <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                                        <button 
+                                        onClick={ () =>  navigate(`/review?doctorId=${ele.doctorId._id}`)}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
                                             Give Review
                                         </button>
                                     )}

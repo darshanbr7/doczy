@@ -24,6 +24,7 @@ import Spinner from './pages/mutual/Spinner';
 import Contact from './pages/mutual/Contact';
 import NotFound from './pages/mutual/NotFound';
 import Payment from './pages/mutual/Payment';
+import Review from './pages/mutual/Review';
 
 import VerifyDoctors from './pages/admin/VerifyDoctors';
 
@@ -34,6 +35,7 @@ import CustomerReviews from './pages/doctor/CustomerReviews';
 import FindDoctors from "./pages/customer/FindDoctors"
 import BookAppontment from './pages/customer/BookAppointment';
 import AppointmentHistory from './pages/customer/AppointmentHistory';
+import MyReviews from './pages/customer/MyReviews';
 
 
 function App() {
@@ -75,6 +77,8 @@ function App() {
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />
           <Route path='/appointment-history' element={<PrivateRoute permittedRoles={["customer"]}> <AppointmentHistory /></PrivateRoute>} />
           <Route path='/customer-reviews' element={<PrivateRoute permittedRoles={["customer"]}> <CustomerReviews /></PrivateRoute>} />
+          <Route path='/review' element={<PrivateRoute permittedRoles={["customer"]}> <Review /></PrivateRoute>} />
+          <Route path='/my-reviews' element={<PrivateRoute permittedRoles={["customer"]}> <MyReviews /></PrivateRoute>} />
           <Route path='/book-appointment' element={<PrivateRoute permittedRoles={["customer"]}> <Elements stripe={stripePromise}> <BookAppontment /> </Elements> </PrivateRoute>} />
           <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
           <Route path='*'  element = { <NotFound/> }/>
