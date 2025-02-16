@@ -5,7 +5,7 @@ import { paymentPageClose, setPaymentError, setPaymentProcessing } from "../../s
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import Spinner from "./Spinner";
 import { toast } from "react-toastify";
-import { bookAppointment } from "../../slices/paymentSlice";
+import { bookAppointment } from "../../slices/appointmentSlice";
 import { useNavigate } from "react-router-dom";
 
 const Payment = ({ amount, formData, doctorId }) => {

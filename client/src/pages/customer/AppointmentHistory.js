@@ -5,13 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { format, parse, differenceInMilliseconds } from "date-fns";
 import SideNavbar from "../mutual/SideNavbar";
 import Spinner from "../mutual/Spinner";
-import { getAppointments, cancelAppointment } from "../../slices/customerSlice";
+import { getAppointments, cancelAppointment } from "../../slices/appointmentSlice";
 
 
 const AppointmentHistory = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { isLoading, serverError, appointments } = useSelector(state => state.customer)
+    const { isLoading, serverError, appointments } = useSelector(state => state.appointment)
     useEffect(() => {
         dispatch(getAppointments());
     }, [])
@@ -27,7 +27,7 @@ const AppointmentHistory = () => {
         dispatch( cancelAppointment( id ) )
     }
     return (
-        <div className="flex bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 min-h-screen">
+        <div className="flex bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 ">
             {isLoading && <Spinner />}
             <div className="p-4 w-auto">
                 <SideNavbar />

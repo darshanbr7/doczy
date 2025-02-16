@@ -8,6 +8,7 @@ import slotReducer from "./slices/slotSlice";
 import customerReducer from "./slices/customerSlice";
 import paymentReducer from "./slices/paymentSlice";
 import reviewReducer from "./slices/reviewSlice";
+import appointmentReducer from "./slices/appointmentSlice";
 
 const store = configureStore( {
     reducer : {
@@ -18,7 +19,8 @@ const store = configureStore( {
         slot : slotReducer,
         customer : customerReducer,
         payment : paymentReducer,
-        review : reviewReducer
+        review : reviewReducer,
+        appointment : appointmentReducer
     }
 })
 

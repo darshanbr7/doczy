@@ -35,7 +35,7 @@ const OptionLogin = () => {
      * This function is used to Send the OTP and invoking the FormValidator and dispatching reducers
      * @param {*} e  - This Function takes Event Object as a argument
      */
-    const handleSendOTP =  (e) => {
+    const handleSendOTP = (e) => {
         e.preventDefault();
         validateEmailOrPhone();
         if (Object.keys(errors).length > 0) {
@@ -43,7 +43,7 @@ const OptionLogin = () => {
         } else {
             setClientErrors(null)
             const inputData = { [state]: formData[state] };
-            dispatch(otherLoginOptions({ inputData, state })); 
+            dispatch(otherLoginOptions({ inputData, state }));
         }
     }
     /**
@@ -61,7 +61,7 @@ const OptionLogin = () => {
     /**
      * This Fuynction invokes the `validateOTP` function to validate the OTP input, and handles any validation errors and dispatches the reducers
      */
-    const handleSubmit =  async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         validateOTP();
         if (Object.keys(errors).length > 0) {

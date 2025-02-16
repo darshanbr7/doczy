@@ -31,6 +31,7 @@ import VerifyDoctors from './pages/admin/VerifyDoctors';
 import Details from "./pages/doctor/Details";
 import GenerateSlots from './pages/doctor/GenerateSlots';
 import CustomerReviews from './pages/doctor/CustomerReviews';
+import DoctorShedules from './pages/doctor/DoctorShedules';
 
 import FindDoctors from "./pages/customer/FindDoctors"
 import BookAppontment from './pages/customer/BookAppointment';
@@ -74,6 +75,7 @@ function App() {
           <Route path='/payment' element={ <PrivateRoute permittedRoles={["customer", "doctor"]}> <Payment /></PrivateRoute> }/>
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
+          <Route path='/doctor-shedules' element={<PrivateRoute permittedRoles={["doctor"]}> <DoctorShedules /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />
           <Route path='/appointment-history' element={<PrivateRoute permittedRoles={["customer"]}> <AppointmentHistory /></PrivateRoute>} />
           <Route path='/customer-reviews' element={<PrivateRoute permittedRoles={["customer"]}> <CustomerReviews /></PrivateRoute>} />

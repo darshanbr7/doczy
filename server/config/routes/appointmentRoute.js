@@ -5,7 +5,7 @@ import appointmentController from "../../app/controllers/appointmentController.j
 import authentication from "../../app/middlewares/authentication.js"
 import authorization from "../../app/middlewares/authorization.js"
 import inputValidator from "../../app/helpers/inputValidator.js"
-import { userId } from "../../app/validators/queryConstants.js";
+import { userId, dateRange } from "../../app/validators/queryConstants.js";
 
 import { appointmentSchemaValidator } from "../../app/validators/appointmenetValidator.js";
 const appointmentRoute = express.Router();
@@ -18,5 +18,9 @@ appointmentRoute.get( "/list", authentication, authorization(["customer"]),   ap
 
 // route for cancel appointment
 appointmentRoute.put( "/cancel", authentication, authorization(["customer"]), checkSchema( { appointmentId : userId }),inputValidator,   appointmentController.cancelAppointment );
+
+// route for doctor to get the all appointments
+appointmentRoute.get("/doctor/list", authentication, authorization(["doctor"]), checkSchema( {doctorId : userId, dateRange }), inputValidator, appointmentController.doctorSpecificAppointments )
+/* appointmentRoute.get("/doctor/list", authentication, authorization(["doctor"]), checkSchema( {doctorId : userId, dateRange }), inputValidator, appointmentController.doctorSpecificAppointments ) */
 
 export default appointmentRoute;

@@ -1,6 +1,6 @@
 import Appointment from "../models/appointmentModel.js";
 import _ from "lodash";
-import { parse, differenceInMilliseconds, format } from "date-fns"
+import { parse, differenceInMilliseconds, format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns"
 import mailSender from "../helpers/userControllerHelpers/mailSender.js";
 import { APPOINTMENT_CONFIRMATION_TEMPLATE, APPOINTMENT_CANCELLATION_TEMPLATE } from "../helpers/appointmentControllerHelper/mailTemplets.js"
 import findDoctorSlots from "../helpers/appointmentControllerHelper/findDoctorSlots.js";
@@ -89,6 +89,36 @@ appointmentController.cancelAppointment = async (req, res) => {
         res.json(updatedAppointment);
     } catch (error) {
         return res.status(500).json({ error: [{ msg: error.message }] })
+    }
+}
+
+appointmentController.doctorSpecificAppointments = async (req, res) => {
+    try {
+        const { doctorId, dateRange } = _.pick(req.query, ["doctorId", "dateRange"]);
+        let startDate;
+        let endDate;
+
+        if (dateRange === "today") {
+            startDate = startOfDay(new Date());
+            endDate = endOfDay(new Date());
+        } else if (dateRange === "week") {
+            startDate = startOfWeek(new Date());
+            endDate = endOfWeek(new Date());
+        } else if (dateRange === "month") {
+            startDate = startOfMonth(new Date());
+            endDate = endOfMonth(new Date());
+        } else {
+            return res.status(400).json({ error: [{ msg: "Invalid date range provided." }] });
+        }
+        const appointments = await Appointment.find({
+            doctorId,
+            appointmentDate: { $gte: startDate, $lte: endDate },
+            status: 'pending'
+        }).populate( "userId", "name");
+        console.log( appointments.length );
+        res.json(appointments);
+    } catch (error) {
+        return res.status(500).json({ error: [{ msg: error.message }] });
     }
 }
 

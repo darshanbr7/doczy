@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../utils/axiosInstance";
-import { toast } from "react-toastify";
 
 export const getDoctors = createAsyncThunk("get/getDoctors", async (formData, { rejectWithValue }) => {
     try {
@@ -31,38 +30,12 @@ export const doctorInfo = createAsyncThunk("get/doctorInfo", async (id, { reject
     }
 })
 
-export const getAppointments = createAsyncThunk("get/getAppointments", async (_, { rejectWithValue }) => {
-    try {
-        const response = await axiosInstance.get('/appointment/list', {
-            headers: {
-                Authorization: localStorage.getItem("token")
-            }
-        });
-        return response.data;
-    } catch (error) {
-        return rejectWithValue(error?.response?.data?.error);
-    }
-})
-export const cancelAppointment = createAsyncThunk("put/cancelAppointment", async (id, { rejectWithValue }) => {
-    try {
-        const response = await axiosInstance.put(`/appointment/cancel?appointmentId=${id}`, {}, {
-            headers: {
-                Authorization: localStorage.getItem("token")
-            }
-        })
-        toast.success("Appointment has been cancelled");
-        console.log( response.data );
-        return response.data;
-    } catch (error) {
-        return rejectWithValue(error?.response?.data?.error);
-    }
-})
+
 const customerSlice = createSlice({
     name: "customer",
     initialState: {
         doctors: [],
         doctorDetails: null,
-        appointments: [],
         currentPage: 1,
         totalPages: 1,
         serverError: null,
@@ -107,35 +80,7 @@ const customerSlice = createSlice({
             state.serverError = action.payload;
         })
 
-        builders.addCase(getAppointments.pending, (state) => {
-            state.isLoading = true;
-        })
-        builders.addCase(getAppointments.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.appointments = action.payload;
-            state.serverError = null
-
-        })
-        builders.addCase(getAppointments.rejected, (state, action) => {
-            state.isLoading = false;
-            state.appointments = []
-            state.serverError = action.payload;
-        })
-
-        builders.addCase(cancelAppointment.pending, (state) => {
-            state.isLoading = true;
-        })
-        builders.addCase(cancelAppointment.fulfilled, (state, action) => {
-            state.isLoading = false;
-            const index = state.appointments.findIndex( ele => ele._id === action.payload._id);
-            state.appointments.splice(index,1, action.payload );
-            state.serverError = null
-
-        })
-        builders.addCase(cancelAppointment.rejected, (state, action) => {
-            state.isLoading = false;
-            state.serverError = action.payload;
-        })
+       
     }
 })
 

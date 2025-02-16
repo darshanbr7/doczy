@@ -4,4 +4,12 @@ const userId = {
         errorMessage :" Id is invalid"
     }
 }
-export  { userId }
+
+const dateRange = {
+    in: [ "query"],
+    isIn : {
+        options : [ ["today", "week", "month"]],
+        errorMessage : "Date range should be Today or Week or Month"
+    }
+}
+export  { userId , dateRange }
