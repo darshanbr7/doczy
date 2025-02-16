@@ -1,83 +1,84 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import listPlugin from "@fullcalendar/list";
-import interactionPlugin from "@fullcalendar/interaction";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { getDoctorAppointments } from "../../slices/appointmentSlice";
 import SideNavbar from "../mutual/SideNavbar";
-import { parse, addMinutes, format } from "date-fns";
+import Spinner from "../mutual/Spinner";
+import { format } from "date-fns";
+import { Link } from "react-router-dom"; // Assuming the button will navigate to a summary page
 
-const DoctorSchedules = () => {
-    const dispatch = useDispatch();
+const DoctorSheules = () => {
+    const { doctorAppointments, isLoading, serverError } = useSelector(
+        (state) => state.appointment
+    );
     const { userInfo } = useSelector((state) => state.auth);
-    const { doctorAppointments } = useSelector((state) => state.appointment);
-    const [events, setEvents] = useState([]);
-    const [ dateRange, setDateRange ] = useState("today")
-    console.log( doctorAppointments );
+    const dispatch = useDispatch();
+
     useEffect(() => {
         if (userInfo?.userId) {
-            dispatch(getDoctorAppointments({ doctorId: userInfo.userId , dateRange}));
+            dispatch(getDoctorAppointments({ doctorId: userInfo.userId, dateRange: "today" }));
         }
-    }, [userInfo?.userId,  dateRange ]);
+    }, [userInfo, dispatch]);
 
-    useEffect(() => {
-        if (!doctorAppointments?.length) return;
-        const formattedEvents = doctorAppointments.map(({ appointmentTime, appointmentDate, userId }) => {
-            const startDate = parse(appointmentTime, "hh:mm a", new Date(appointmentDate));
-            const endDate = addMinutes(startDate, 10);
-            
-            return {
-                title: `${userId.name} (${format(startDate, "hh:mm a")} - ${format(endDate, "hh:mm a")})`,
-                start: startDate,
-                end: endDate,
-                backgroundColor: "#4F46E5",
-                textColor: "#FFFFFF",
-            };
-        });
+    if (serverError?.length > 0) {
+        return (
+            <div className="text-sm  text-red-400 flex justify-center ">
+                {serverError.map((ele, i) => {
+                    return <li key={i}> {ele.msg}</li>
+                })}
+            </div>
+        )
+    }
 
-        setEvents(formattedEvents);
-    }, [doctorAppointments]);
-
-    const handleViewChange = (view) => {
-        if (view.type === "timeGridDay") setDateRange("today");
-        else if (view.type === "timeGridWeek") setDateRange("week");
-        else if (view.type === "dayGridMonth") setDateRange("month");
-        else if (view.type === "listWeek") setDateRange("today");
-    };
-
-    console.log( dateRange )
     return (
-        <div className="flex bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 min-h-screen">
-            <div className="flex p-4 w-auto">
+        <div className="flex min-h-screen bg-gradient-to-r from-blue-50 via-blue-100 to-blue-50">
+            { isLoading && <Spinner/> }
+            <div className="w-auto p-4">
                 <SideNavbar />
             </div>
 
-            <div className="w-3/4 p-8 bg-white shadow-lg rounded-xl ml-4 mt-4">
-                <h2 className="text-xl font-semibold text-center mb-4 text-gray-800">Your Schedules</h2>
+            {/* Appointment Cards Section */}
+            <div className="flex-1 p-6">
+                {/* Changed flex to flex-col to stack appointments vertically */}
+                <div className="flex flex-col w-1/2 space-y-6">
+                    {doctorAppointments?.map((appointment) => (
+                        <div
+                            key={appointment?._id}
+                            className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300"
+                        >
+                            <div className="mb-2">
+                                <p className=" text-sm  text-gray-800">
+                                    <strong>Customer Name : </strong> {appointment?.userId?.name}
+                                </p>
+                                <p className="  text-sm  text-gray-800">
+                                    <strong>Appointment Date : </strong>
+                                    {format(new Date(appointment.appointmentDate), "eee MMM dd, yyyy")}
+                                </p>
+                                <p className=" text-sm  text-gray-800">
+                                    <strong>Appointment Time:</strong> {appointment.appointmentTime}
+                                </p>
+                            </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-                    <FullCalendar
-                        plugins={[timeGridPlugin, dayGridPlugin, listPlugin, interactionPlugin]}
-                        initialView="listWeek"
-                        height="80vh"
-                        events={events}
-                        nowIndicator={true}
-                        slotMinTime="00:00:00"
-                        slotMaxTime="24:00:00"
-                        headerToolbar={{
-                            left: "prev,next today",
-                            center: "title",
-                            right: "timeGridDay,timeGridWeek,dayGridMonth,listWeek",
-                        }}
-                        dayHeaderClassNames={() => "text-gray-800 font-semibold"}
-                        viewDidMount={({ view }) => handleViewChange(view)}
-                    />
+                            <div className="mb-4">
+                                <p className=" text-sm  text-gray-800">
+                                    <strong>Payment Method:</strong>{" "}
+                                    {appointment.paymentMethod ? appointment.paymentMethod : "N/A"}
+                                </p>
+                            </div>
+                            <div className=" flex justify-end ">
+                                <Link
+                                    to={`/appointment-summary?appointmentId=${appointment._id}&customerId=${appointment?.userId?._id}`}
+                                    className=" text-center py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
+                                >
+                                    Provide Summary
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
+
         </div>
     );
 };
 
-export default DoctorSchedules;
+export default DoctorSheules;

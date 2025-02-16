@@ -44,7 +44,7 @@ appointmentController.myAppointments = async (req, res) => {
     try {
         const { userId } = _.pick(req.currentUser, ["userId"]);
         const appointments = await Appointment.find({ userId })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .populate("doctorId", "name");
         res.json(appointments);
     } catch (error) {

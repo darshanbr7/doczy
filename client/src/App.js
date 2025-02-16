@@ -31,12 +31,15 @@ import VerifyDoctors from './pages/admin/VerifyDoctors';
 import Details from "./pages/doctor/Details";
 import GenerateSlots from './pages/doctor/GenerateSlots';
 import CustomerReviews from './pages/doctor/CustomerReviews';
+import DoctorCalender from './pages/doctor/DoctorCalender';
 import DoctorShedules from './pages/doctor/DoctorShedules';
+import AppointmentSummary from './pages/doctor/AppointmentSummary';
 
 import FindDoctors from "./pages/customer/FindDoctors"
 import BookAppontment from './pages/customer/BookAppointment';
 import AppointmentHistory from './pages/customer/AppointmentHistory';
 import MyReviews from './pages/customer/MyReviews';
+import ConsultationSummary from './pages/customer/ConsultationSummary';
 
 
 function App() {
@@ -61,9 +64,7 @@ function App() {
     <div className="flex flex-col  ">
       <Navbar />
       <div className="flex-grow">
-        {/* Ensures the footer always stays at the bottom without causing overflow. */}
         <Routes>
-          
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login /> } />
           <Route path="/register" element={ <Register />} />
@@ -75,12 +76,15 @@ function App() {
           <Route path='/payment' element={ <PrivateRoute permittedRoles={["customer", "doctor"]}> <Payment /></PrivateRoute> }/>
           <Route path='/details' element={<PrivateRoute permittedRoles={["doctor"]}> <Details /></PrivateRoute>} />
           <Route path='/generate-slots' element={<PrivateRoute permittedRoles={["doctor"]}> <GenerateSlots /></PrivateRoute>} />
+          <Route path='/doctor-calender' element={<PrivateRoute permittedRoles={["doctor"]}> <DoctorCalender /></PrivateRoute>} />
           <Route path='/doctor-shedules' element={<PrivateRoute permittedRoles={["doctor"]}> <DoctorShedules /></PrivateRoute>} />
+          <Route path='/appointment-summary' element={<PrivateRoute permittedRoles={["doctor"]}> <AppointmentSummary /></PrivateRoute>} />
           <Route path='/find-doctors' element={<PrivateRoute permittedRoles={["customer"]}> <FindDoctors /></PrivateRoute>} />
           <Route path='/appointment-history' element={<PrivateRoute permittedRoles={["customer"]}> <AppointmentHistory /></PrivateRoute>} />
           <Route path='/customer-reviews' element={<PrivateRoute permittedRoles={["customer"]}> <CustomerReviews /></PrivateRoute>} />
           <Route path='/review' element={<PrivateRoute permittedRoles={["customer"]}> <Review /></PrivateRoute>} />
           <Route path='/my-reviews' element={<PrivateRoute permittedRoles={["customer"]}> <MyReviews /></PrivateRoute>} />
+          <Route path='/consultation-summary' element={<PrivateRoute permittedRoles={["customer"]}> <ConsultationSummary /></PrivateRoute>} />
           <Route path='/book-appointment' element={<PrivateRoute permittedRoles={["customer"]}> <Elements stripe={stripePromise}> <BookAppontment /> </Elements> </PrivateRoute>} />
           <Route  path = "/verify-doctors" element = { <PrivateRoute permittedRoles = { ["admin"]}> <VerifyDoctors/> </PrivateRoute>}/>
           <Route path='*'  element = { <NotFound/> }/>

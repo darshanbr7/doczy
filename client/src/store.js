@@ -9,6 +9,7 @@ import customerReducer from "./slices/customerSlice";
 import paymentReducer from "./slices/paymentSlice";
 import reviewReducer from "./slices/reviewSlice";
 import appointmentReducer from "./slices/appointmentSlice";
+import summaryReducer  from "./slices/summarySlice";
 
 const store = configureStore( {
     reducer : {
@@ -20,7 +21,8 @@ const store = configureStore( {
         customer : customerReducer,
         payment : paymentReducer,
         review : reviewReducer,
-        appointment : appointmentReducer
+        appointment : appointmentReducer,
+        summary : summaryReducer
     }
 })
 

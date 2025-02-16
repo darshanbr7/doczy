@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { TbLogout2 } from "react-icons/tb";
 import { IoReorderThree } from "react-icons/io5";
-import { FaRegUserCircle, FaBusinessTime, FaRegStar, FaClipboardList } from "react-icons/fa";
+import { FaRegUserCircle, FaBusinessTime, FaRegStar, FaClipboardList, FaRegCalendarAlt } from "react-icons/fa";
 import { TiDocumentText } from "react-icons/ti";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdOutlineWorkHistory } from "react-icons/md";
@@ -58,6 +58,10 @@ const SideNavbar = () => {
                 {userInfo.role === "doctor" && <p className="  p-4 flex text-bold cursor-pointer ">
                     <Link to="/generate-slots" className="flex items-center space-x-2" ><FaBusinessTime color="black" size={25} />
                         {isExpanded && <span className="ml-2 font-semibold text-sm text-blue-500"> Generate Slots </span>}</Link>
+                </p>}
+                {userInfo.role === "doctor" && <p className="  p-4 flex text-bold cursor-pointer ">
+                    <Link to="/doctor-calender" className="flex items-center space-x-2" ><FaRegCalendarAlt color="black" size={25} />
+                        {isExpanded && <span className="ml-2 font-semibold text-sm text-blue-500"> Calender </span>}</Link>
                 </p>}
                 {userInfo.role === "doctor" && <p className="  p-4 flex text-bold cursor-pointer ">
                     <Link to="/doctor-shedules" className="flex items-center space-x-2" ><FaClipboardList color="black" size={25} />

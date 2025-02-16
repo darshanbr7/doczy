@@ -51,8 +51,10 @@ export const TOKEN_EMAIL_TEMPLATE = `
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p>Hello,</p>
     <p>Thank you for signingUp ! Click the link to Verify Account:</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <span style="font-size: 16px; font-weight: bold; color: #4CAF50;">{token}</span>
+     <div style="text-align: center; margin-top: 30px;">
+      <a href="{token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 10px; display: inline-block;">
+        Click here to verify Account
+      </a>
     </div>
     <p>Best regards,<br> DOCZY Team</p>
   </div>

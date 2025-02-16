@@ -118,3 +118,46 @@ export const REMINDER_EMAIL_TEMPLATE = `
 </html>
 `;
 
+export const POST_CONSULTATION_EMAIL_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You for Your Consultation</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">Thank You for Your Consultation!</h1>
+  </div>
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p>Hello <strong>{customerName}</strong>,</p>
+    <p>We hope your consultation with <strong>{doctorName}</strong> was helpful and informative!</p>
+    
+    <div style="margin: 20px 0;">
+      <p><strong>Appointment Date:</strong> {appointmentDate}</p>
+      <p><strong>Appointment Time:</strong> {appointmentTime}</p>
+    </div>
+
+    <p>We would love to hear your feedback. Please take a moment to rate your experience and provide a review:</p>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <p><strong>How was your experience with {doctorName} ?</strong></p>
+      <a href="{reviewLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 10px; display: inline-block;">
+        Click here to leave a review
+      </a>
+    </div>
+
+    <p>Your feedback helps us improve our services and ensures we continue to provide quality care to all our patients.</p>
+
+    <p>Thank you for your time!</p>
+
+    <p>Best regards,<br> DOCZY Team</p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
+    <p>This is an automated message, please do not reply to this email.</p>
+  </div>
+</body>
+</html>
+`;

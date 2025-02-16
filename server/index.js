@@ -11,6 +11,7 @@ import specializationRoute from "./config/routes/specializationRoute.js";
 import appointmentRoute from "./config/routes/appointmentRoute.js";
 import paymentRoute from "./config/routes/paymentRoute.js"
 import reviewRoute from "./config/routes/reviewRoute.js";
+import summaryRoute from "./config/routes/summaryRoute.js"
 
 import dbConnect from "./config/db/dbConnection.js";
 import appointmentReminder from "./app/helpers/appointmentControllerHelper/appointmentReminder.js";
@@ -40,6 +41,8 @@ app.use( "/api/payment", paymentRoute );
 app.use( "/api/appointment", appointmentRoute );
 // review related routes
 app.use( "/api/review", reviewRoute );
+//summary related routes
+app.use( "/api/summary", summaryRoute );
 
 // runninng corn job at 12:00 AM everyday
 corn.schedule( '0 0 * * *' , ( ) => {

@@ -66,7 +66,9 @@ const AppointmentHistory = () => {
 
                                 <div className="mt-4 text-left text-sm text-gray-600">
                                     {ele.status === 'completed' && (
-                                        <p className="text-blue-600 cursor-pointer hover:text-blue-800 hover:underline hover:font-semibold">
+                                        <p 
+                                        onClick={ () => navigate(`/consultation-summary?appointmentId=${ele._id}`)}
+                                        className="text-blue-600 cursor-pointer hover:text-blue-800 hover:underline hover:font-semibold">
                                             Consultation Recap
                                         </p>
                                     )}
