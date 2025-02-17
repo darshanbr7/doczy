@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/mutual/Login';
 import ForgotPassword from './pages/mutual/ForgotPassword';
 import ResetPassword from './pages/mutual/ResetPassword';
+import ChangePassword from './pages/mutual/ChangePassword';
 
 import Home from './pages/mutual/Home';
 import Navbar from './pages/mutual/Navbar';
@@ -75,6 +76,7 @@ function App() {
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path='/profile' element={<PrivateRoute> <Profile /></PrivateRoute>} />
+          <Route path='/change-password' element={<PrivateRoute permittedRoles={["customer", "doctor", "admin"]}> <ChangePassword /></PrivateRoute>} />
           <Route path='/dashboard' element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />
           <Route path='/contact' element={<PrivateRoute permittedRoles={["customer", "doctor"]}> <Contact /></PrivateRoute>} />
           <Route path='/payment' element={ <PrivateRoute permittedRoles={["customer", "doctor"]}> <Payment /></PrivateRoute> }/>

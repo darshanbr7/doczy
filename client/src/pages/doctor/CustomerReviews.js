@@ -36,7 +36,7 @@ const CustomerReviews = () => {
                         return (
                             <div key={review._id} className="w-full bg-slate-100 mb-4 p-8 rounded-lg">
                                 <div className="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
-                                    <div className="text-lg font-semibold text-blue-600">{review.userId.name}</div>
+                                    <div className="text-lg font-semibold text-blue-600">{review?.userId?.name}</div>
                                     <div className="max-w-32">
                                         <Rating
                                             readOnly

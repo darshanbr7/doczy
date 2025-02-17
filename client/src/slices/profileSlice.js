@@ -43,6 +43,31 @@ export const updateProfile = createAsyncThunk( "put/updateProfile", async ( form
         return rejectWithValue( error?.response?.data?.error );
     }
 })
+
+export const updatePassword = createAsyncThunk ( "put/updatePassword",  async (formdata, { rejectWithValue } ) => {
+    try {
+        await axiosInstance.put("/auth/update-password", formdata,{
+            headers : {
+                Authorization : localStorage.getItem("token")
+            }
+        })
+        toast.success( "Password Updated Successfully")
+    } catch (error) {
+        return rejectWithValue( error?.response?.data?.error );
+    }
+})
+export const deleteAccount = createAsyncThunk ( "put/deleteAccount",  async (_, { rejectWithValue } ) => {
+    try {
+        await axiosInstance.delete("/auth/delete-account",{
+            headers : {
+                Authorization : localStorage.getItem("token")
+            }
+        })
+        toast.success( "Account Deleted Successfully")
+    } catch (error) {
+        return rejectWithValue( error?.response?.data?.error );
+    }
+})
 const profileSlice = createSlice( {
     name : "profile",
     initialState :  {
@@ -99,6 +124,29 @@ const profileSlice = createSlice( {
             state.isLoading = false 
         })
         builders.addCase( updateProfile.rejected, (  state, action  ) => {
+            state.serverError = action.payload;
+            state.isLoading = false 
+        })
+
+        builders.addCase( updatePassword.pending, (  state ) => {
+            state.isLoading = true 
+        })
+        builders.addCase( updatePassword.fulfilled, (  state, action  ) => {
+            state.serverError = null;
+            state.isLoading = false 
+        })
+        builders.addCase( updatePassword.rejected, (  state, action  ) => {
+            state.serverError = action.payload;
+            state.isLoading = false 
+        })
+        builders.addCase( deleteAccount.pending, (  state ) => {
+            state.isLoading = true 
+        })
+        builders.addCase( deleteAccount.fulfilled, (  state, action  ) => {
+            state.serverError = null;
+            state.isLoading = false 
+        })
+        builders.addCase( deleteAccount.rejected, (  state, action  ) => {
             state.serverError = action.payload;
             state.isLoading = false 
         })

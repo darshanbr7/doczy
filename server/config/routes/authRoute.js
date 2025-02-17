@@ -35,4 +35,7 @@ authRoute.post("/reset-password", checkSchema(  { token, userId, newPassword: pa
 //route to update the password
 authRoute.put("/update-password",  authentication, checkSchema({updatedPassword : userRegisterSchema.password }), inputValidator, userController.updatePassword )
 
+//route for delete the account
+authRoute.delete("/delete-account",  authentication,  userController.deleteAccount )
+
 export default authRoute;

@@ -9,7 +9,6 @@
  * @returns {Array} The MongoDB aggregation pipeline with various stages based on the input parameters.
 */
 
-
 export const aggrigatorForAdmin = ({ name, isVerified, skip, pageLimit }) => {
     const pipeLine = [];
     pipeLine.push({

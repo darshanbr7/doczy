@@ -3,10 +3,17 @@ import _ from "lodash";
 import randToken from "rand-token"
 import User from "../models/userModel.js"
 import Token from "../models/tokenModel.js";
+import Profile from "../models/profileModel.js"
+import Appointment from "../models/appointmentModel.js";
+import Review from "../models/reviewModel.js"
+import Slot from "../models/slotModel.js";
+import DocInfo from '../models/docInfoModel.js'
+import AppointmentSummary from "../models/appointmentSummaryModel.js"
 import checkCollection from "../helpers/userControllerHelpers/checkCollection.js"
 import generateToken from "../helpers/userControllerHelpers/generateToken.js";
 import { TOKEN_EMAIL_TEMPLATE, FORGOT_PASSWORD_EMAIL_TEMPLATE } from "../helpers/userControllerHelpers/mailTemplets.js";
 import mailSender from "../helpers/userControllerHelpers/mailSender.js";
+import mongoose from "mongoose";
 
 const userController = {}
 /**
@@ -193,6 +200,34 @@ userController.updatePassword = async (req, res) => {
         user.password = hash;
         await user.save();
         res.json("password updated successfully");
+    } catch (error) {
+        return res.status(500).json({ error: [{ msg: error.message }] })
+    }
+}
+
+/**
+ * This function is used to deletes a user account along with associated data from multiple collections.
+ * @param {Object} req - The request object, which contains the current user's information.
+ * @param {Object} res - The response object, which is used to send back the result of the operation.
+ * @returns {Object} A JSON response indicating success or failure.
+ */
+userController.deleteAccount = async (req, res) => {
+    try {
+        const { userId, role } = _.pick(req.currentUser, ["userId", "role"]);
+        await User.findByIdAndDelete(userId);
+        await Profile.deleteOne({ userId });
+        if (role === "doctor") {
+            await Review.deleteMany({ doctorId: userId });
+            await Slot.deleteMany({ doctorId: userId });
+            await DocInfo.deleteMany({ userId })
+            await AppointmentSummary.deleteMany({ doctorId: userId })
+        }
+        if (role === "customer") {
+            await Appointment.deleteMany({ userId });
+            await Review.deleteMany({ userId });
+            await AppointmentSummary.deleteMany({ userId })
+        }
+        res.json("Account deleted Successfully");
     } catch (error) {
         return res.status(500).json({ error: [{ msg: error.message }] })
     }
