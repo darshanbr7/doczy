@@ -83,6 +83,26 @@ export const getUser = createAsyncThunk( "user/getUser", async ( _, { rejectWith
     }
 })
 
+export const forgotPassword = createAsyncThunk( "post/forgotPassword", async ( email, { rejectWithValue } ) => {
+    try {
+        await axiosInstance.post("/auth/forgot-password", { email });
+        toast.success("Password Reset Link sent to your Registered Email");
+        return true;
+    } catch (error) {
+        return rejectWithValue( error?.response?.data?.error)
+    }
+})
+
+export const resetPassword = createAsyncThunk( "post/resetPassword", async ( formData, { rejectWithValue } ) => {
+    try {
+        await axiosInstance.post(`/auth/reset-password?userId=${ formData.userId }&token=${formData.token}`, {  newPassword : formData.password});
+        toast.success("Reseted Password Successfully");
+        return true;
+    } catch (error) {
+        return rejectWithValue( error?.response?.data?.error)
+    }
+})
+
 
 const authSlice = createSlice( {
     name : "auth",
@@ -183,6 +203,30 @@ const authSlice = createSlice( {
             state.serverError = action.payload;
             state.userInfo = null;
             state.isLoggedIn = false;
+        })
+
+        builders.addCase( forgotPassword.pending, ( state ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( forgotPassword.fulfilled, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = false;
+        })
+        builders.addCase( forgotPassword.rejected, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = action.payload;
+        })
+
+        builders.addCase( resetPassword.pending, ( state ) => {
+            state.isLoading = true;
+        })
+        builders.addCase( resetPassword.fulfilled, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = false;
+        })
+        builders.addCase( resetPassword.rejected, ( state, action ) => {
+            state.isLoading = false;
+            state.serverError = action.payload;
         })
 
     }

@@ -12,6 +12,8 @@ import { getSpecializations } from './slices/doctorDetailsSlice';
 import PrivateRoute from './pages/mutual/PrivateRoute';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/mutual/Login';
+import ForgotPassword from './pages/mutual/ForgotPassword';
+import ResetPassword from './pages/mutual/ResetPassword';
 
 import Home from './pages/mutual/Home';
 import Navbar from './pages/mutual/Navbar';
@@ -69,6 +71,8 @@ function App() {
           <Route path="/login" element={<Login /> } />
           <Route path="/register" element={ <Register />} />
           <Route path='/option-login' element={<OptionLogin />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path='/profile' element={<PrivateRoute> <Profile /></PrivateRoute>} />
           <Route path='/dashboard' element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />

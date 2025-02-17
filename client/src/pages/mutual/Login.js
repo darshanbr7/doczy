@@ -156,7 +156,9 @@ const Login = () => {
 
                                 </div>
                                 <div className="text-sm  mt-2   flex justify-end font-semibold text-blue-600 ">
-                                    <p className="hover:underline cursor-pointer" > Forgot password ?</p>
+                                    <p 
+                                    onClick={ () =>  navigate("/forgot-password")}
+                                    className="hover:underline cursor-pointer" > Forgot password ?</p>
                                 </div>
                             </form>
 

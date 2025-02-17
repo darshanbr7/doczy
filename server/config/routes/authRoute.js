@@ -7,7 +7,7 @@ import authentication from "../../app/middlewares/authentication.js";
 
 import userController from "../../app/controllers/userController.js";
 import otpController from "../../app/controllers/otpController.js";
-import { email, phoneNumber, userId, token } from "../../app/validators/reqConstants.js";
+import { email, phoneNumber, userId, token, password } from "../../app/validators/reqConstants.js";
 const authRoute = express.Router();
 
  // Route for signUp and signIn user.
@@ -25,5 +25,14 @@ authRoute.post ( "/verify-otp", checkSchema( userLoginSchema ), inputValidator, 
 
 // Route for accessing the user's account details.
 authRoute.get( "/account", authentication, userController.account );
+
+//route for send the token when user forgot the password
+authRoute.post("/forgot-password", checkSchema(  { email } ), inputValidator, userController.forgotPassword );
+
+// route to reset the password
+authRoute.post("/reset-password", checkSchema(  { token, userId, newPassword: password } ), inputValidator, userController.resetPassword );
+
+//route to update the password
+authRoute.put("/update-password",  authentication, checkSchema({updatedPassword : userRegisterSchema.password }), inputValidator, userController.updatePassword )
 
 export default authRoute;
