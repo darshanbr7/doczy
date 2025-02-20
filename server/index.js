@@ -28,6 +28,8 @@ app.use(cors({
   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods
   credentials: true, // If you need to send cookies or authentication data
 }));
+app.options('*', cors());
+
 // app.use(express.urlencoded({ extended: true }));
 // Register authentication-related routes under "/api/auth"
 app.use( "/api/auth", authRoutes );
