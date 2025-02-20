@@ -21,17 +21,13 @@ dotenv.config();
 // Create an instance of an express application, Retrieve the port number from the environment variable
 const app = express();
 const port  = process.env.PORT  
-
-app.use(
-    cors({
-      origin: "https://doczy.vercel.app", // Allow requests only from this origin
-      methods: "OPTIONS, GET, POST, PUT, DELETE",
-      credentials: true,
-      allowedHeaders: ["Content-Type", "Authorization"],
-      preflightContinue: false,
-    })
-  );
 app.use( express.json() );
+
+app.use(cors({
+  origin: 'https://doczy.vercel.app', // Allow only this origin
+  methods: 'GET,POST,PUT,DELETE', // Specify allowed methods
+  credentials: true, // If you need to send cookies or authentication data
+}));
 // app.use(express.urlencoded({ extended: true }));
 // Register authentication-related routes under "/api/auth"
 app.use( "/api/auth", authRoutes );
