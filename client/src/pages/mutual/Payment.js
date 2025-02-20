@@ -47,7 +47,6 @@ const Payment = ({ amount, formData, doctorId }) => {
         if (error) {
             setPaymentError(error.message);
             setPaymentProcessing(false);
-            toast.warning("Payment was failed");
         } else if (paymentIntent.status === 'succeeded') {
             const actionResult = await dispatch(bookAppointment({ doctorId, appointmentDate: formData.date, appointmentTime: formData.time, consultationFee: amount, paymentMethod: "online" }));
             setPaymentProcessing(false);

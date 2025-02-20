@@ -83,6 +83,7 @@ otpController.verifyOtp = async (req, res) => {
             throw new Error("OTP not found for this user")
         }
         if (getOtp.retryCounts === 0) {
+            await getOtp.deleteOne();
             return res.status(400).json({ error: [{ msg: "Exceded the attempts for login try after some time" }] });
         }
         const currentTime = new Date();
@@ -97,13 +98,13 @@ otpController.verifyOtp = async (req, res) => {
                     retryCounts: getOtp.retryCounts - 1
                 }
                 await OTP.findOneAndUpdate({ userId: user.id }, newCount, { new: true });
-                return res.status(400).json({ error: [{ msg: "Invalid OTP try again " }] })
+                throw new Error( `Invalid OTP, there are ${newCount.retryCounts} are remaining `)
             }
         }
 
 
     } catch (error) {
-        res.status(500).json({ error: [{ msg: "Something went wrong, while verifying the  OTP! " }] })
+        res.status(500).json({ error: [{ msg: error.message }] })
     }
 }
 

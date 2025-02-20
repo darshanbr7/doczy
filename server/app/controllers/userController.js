@@ -102,7 +102,7 @@ userController.verify = async (req, res) => {
             return res.status(404).json({ error: [{ msg: "Token is invalid " }] });
         }
         await User.findByIdAndUpdate(userId, { isVerified }, { new: true, runValidators: true })
-        await Token.findOneAndDelete({ userId, token });
+        await tokenRecord.deleteOne();
         res.json({ success: true, message: "user verified succesfully" })
     } catch (error) {
         res.status(500).json({ error: [{ msg: "Something went wrong! while verifying account " }] })
@@ -214,20 +214,33 @@ userController.updatePassword = async (req, res) => {
 userController.deleteAccount = async (req, res) => {
     try {
         const { userId, role } = _.pick(req.currentUser, ["userId", "role"]);
-        await User.findByIdAndDelete(userId);
-        await Profile.deleteOne({ userId });
+
+        const deletePromises = [
+            User.findByIdAndDelete(userId),
+            Profile.deleteOne({ userId })
+        ];
+
         if (role === "doctor") {
-            await Review.deleteMany({ doctorId: userId });
-            await Slot.deleteMany({ doctorId: userId });
-            await DocInfo.deleteMany({ userId })
-            await AppointmentSummary.deleteMany({ doctorId: userId })
+            deletePromises.push(
+                Review.deleteMany({ doctorId: userId }),
+                Slot.deleteMany({ doctorId: userId }),
+                DocInfo.deleteMany({ userId }),
+                AppointmentSummary.deleteMany({ doctorId: userId })
+            );
         }
+
         if (role === "customer") {
-            await Appointment.deleteMany({ userId });
-            await Review.deleteMany({ userId });
-            await AppointmentSummary.deleteMany({ userId })
+            deletePromises.push(
+                Appointment.deleteMany({ userId }),
+                Review.deleteMany({ userId }),
+                AppointmentSummary.deleteMany({ userId })
+            );
         }
+
+        await Promise.all(deletePromises);
+
         res.json("Account deleted Successfully");
+
     } catch (error) {
         return res.status(500).json({ error: [{ msg: error.message }] })
     }

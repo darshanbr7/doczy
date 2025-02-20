@@ -45,7 +45,7 @@ app.use( "/api/review", reviewRoute );
 app.use( "/api/summary", summaryRoute );
 
 // runninng corn job at 12:00 AM everyday
-corn.schedule( '24 12 * * *' , ( ) => {
+corn.schedule( '53 16 * * *' , ( ) => {
     appointmentReminder();
 })
 // Start the server and listen on the specified port

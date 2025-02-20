@@ -64,6 +64,7 @@ export const otpVerify = createAsyncThunk( "post/otpVerify", async ( formData, {
        toast.success( "User Login successfully");
        return response.data;
     } catch (error) {
+        console.log( error );
         return  rejectWithValue( error?.response?.data?.error );
     }
 })
@@ -116,6 +117,9 @@ const authSlice = createSlice( {
     reducers : {
         setLoader : ( state ) => {
             state.isLoading = true;
+        },
+        setBack : ( state ) => {
+            state.otpSent = false
         },
         logout : ( state ) => {
             state.isLoggedIn = false;
@@ -173,6 +177,7 @@ const authSlice = createSlice( {
         })
         builders.addCase( otherLoginOptions.rejected, ( state, action ) => {
             state.isLoading = false;
+            state.otpSent = false;
             state.serverError = action.payload
         })
         builders.addCase( otpVerify.pending, ( state, action ) => {
@@ -231,5 +236,5 @@ const authSlice = createSlice( {
 
     }
 })
-export const {  setLoader, logout  } = authSlice.actions;
+export const {  setLoader, logout, setBack  } = authSlice.actions;
 export default authSlice.reducer;
