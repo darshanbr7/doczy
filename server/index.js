@@ -23,6 +23,14 @@ const app = express();
 const port  = process.env.PORT  
 
 app.use( cors() );
+app.use(
+    cors({
+      origin: "https://doczy.vercel.app", // Allow requests only from this origin
+      methods: "OPTIONS, GET, POST, PUT, DELETE",
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
+    })
+  );
 app.use( express.json() );
 // app.use(express.urlencoded({ extended: true }));
 // Register authentication-related routes under "/api/auth"
