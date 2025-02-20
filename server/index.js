@@ -22,13 +22,13 @@ dotenv.config();
 const app = express();
 const port  = process.env.PORT  
 
-app.use( cors() );
 app.use(
     cors({
       origin: "https://doczy.vercel.app", // Allow requests only from this origin
       methods: "OPTIONS, GET, POST, PUT, DELETE",
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
+      preflightContinue: false,
     })
   );
 app.use( express.json() );
@@ -53,7 +53,7 @@ app.use( "/api/review", reviewRoute );
 app.use( "/api/summary", summaryRoute );
 
 // runninng corn job at 12:00 AM everyday
-corn.schedule( '53 16 * * *' , ( ) => {
+corn.schedule( '0 0 * * *' , ( ) => {
     appointmentReminder();
 })
 // Start the server and listen on the specified port
