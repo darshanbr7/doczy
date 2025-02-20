@@ -1,5 +1,5 @@
 import axios from "axios"
 const axiosInstance = axios.create({
-    baseURL : "http://localhost:3007/api"
+    baseURL : "https://doczy-server.vercel.app"
 })
 export default axiosInstance
