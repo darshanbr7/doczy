@@ -7,30 +7,30 @@ import jwt from "jsonwebtoken";
  * @returns { Function } - If successful, proceeds to the next middleware or route handler by calling `next()`.
     If an error occurs, responds with an appropriate error message and status code.
  */
-const authentication = ( req, res, next ) => {
+const authentication = (req, res, next) => {
     try {
         let token = req.headers["authorization"];
-        if( !token ){
-            return res.status( 400 ).json ({ error : [ { msg : "Token is required"}]} );
-        } 
-        token = token.split(" ")[ 1 ];
+        if (!token) {
+            return res.status(400).json({ error: [{ msg: "Token is required" }] });
+        }
+        token = token.split(" ")[1];
         const secretKey = process.env.JWT_SECRET;
-        const isValid = jwt.verify( token, secretKey );
-        if( !isValid ) {
-            return res.status( 401 ). json ({ error : [ { msg : "Token is invalid "}]})
+        const isValid = jwt.verify(token, secretKey);
+        if (!isValid) {
+            return res.status(401).json({ error: [{ msg: "Token is invalid " }] })
         }
         const currentUser = {
-            userId : isValid.userId,
-            role : isValid.role,
-            name : isValid.name,
-            isVerified : isValid.isVerified,
-            email : isValid.email,
-            phoneNumber : isValid.phoneNumber
+            userId: isValid.userId,
+            role: isValid.role,
+            name: isValid.name,
+            isVerified: isValid.isVerified,
+            email: isValid.email,
+            phoneNumber: isValid.phoneNumber
         }
         req.currentUser = currentUser;
-       return next();
+        return next();
     } catch (error) {
-        res.status( 500 ).json ( { error : [ { msg : "Something went wrong, Error while authenticating the request" } ]} );
+        res.status(500).json({ error: [{ msg: "Something went wrong, Error while authenticating the request" }] });
     }
 }
 export default authentication;
