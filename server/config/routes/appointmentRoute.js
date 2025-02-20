@@ -7,7 +7,7 @@ import authorization from "../../app/middlewares/authorization.js"
 import inputValidator from "../../app/helpers/inputValidator.js"
 import { userId, dateRange } from "../../app/validators/queryConstants.js";
 
-import { appointmentSchemaValidator } from "../../app/validators/appointmenetValidator.js";
+import { appointmentSchemaValidator } from "../../app/validators/appointmentValidator.js";
 const appointmentRoute = express.Router();
 
 // route for creating an appointment
