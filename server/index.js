@@ -51,7 +51,9 @@ app.use( "/api/appointment", appointmentRoute );
 app.use( "/api/review", reviewRoute );
 //summary related routes
 app.use( "/api/summary", summaryRoute );
-
+app.get( "/", ( req, res) => {
+  res.send ( "Hello Server")
+})
 // runninng corn job at 12:00 AM everyday
 corn.schedule( '0 0 * * *' , ( ) => {
     appointmentReminder();
