@@ -22,13 +22,14 @@ dotenv.config();
 const app = express();
 const port  = process.env.PORT  
 app.use( express.json() );
+app.use( corn() )
 
-app.use(cors({
+/* app.use(cors({
   origin: 'https://doczy.vercel.app', // Allow only this origin
   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods
   credentials: true, // If you need to send cookies or authentication data
 }));
-app.options('*', cors());
+app.options('*', cors()); */
 
 // app.use(express.urlencoded({ extended: true }));
 // Register authentication-related routes under "/api/auth"
