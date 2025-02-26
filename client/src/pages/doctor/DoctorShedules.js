@@ -38,8 +38,14 @@ const DoctorSheules = () => {
 
             {/* Appointment Cards Section */}
             <div className="flex-1 p-6">
+            {
+                    doctorAppointments.length === 0 && <div className="flex justify-center items-center">
+                        <p className="font-semibold"> Doctor you don't have any shedules for today</p>
+                        </div>
+                }
                 {/* Changed flex to flex-col to stack appointments vertically */}
                 <div className="flex flex-col w-1/2 space-y-6">
+                
                     {doctorAppointments?.map((appointment) => (
                         <div
                             key={appointment?._id}

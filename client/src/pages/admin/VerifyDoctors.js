@@ -14,10 +14,10 @@ const VerifyDoctors = () => {
         isVerified: false,
         name: "",
         page: currentPage,
-        limit : 2,
+        limit: 2,
     })
-    
-    
+
+
     const statusOptions = [
         { value: true, label: "Verified" },
         { value: false, label: "Not verified" }
@@ -28,23 +28,23 @@ const VerifyDoctors = () => {
     //using debounce to handle unneccessary api calling
     const debounceApiCall = useRef(
         debounce((data) => {
-           dispatch( getDoctors( data ) );
+            dispatch(getDoctors(data));
         }, 1000)
     ).current;
-    
+
     useEffect(() => {
         debounceApiCall(formData);
     }, [formData])
 
-    const hanldleApprove = ( id ) => {
-        dispatch( handleVerification( { id,  isVerified : true  } ) );
+    const hanldleApprove = (id) => {
+        dispatch(handleVerification({ id, isVerified: true }));
     }
-    const hanldleDiscard = ( id ) => {
-        dispatch( handleVerification( { id,  isVerified : false  } ) );
+    const hanldleDiscard = (id) => {
+        dispatch(handleVerification({ id, isVerified: false }));
     }
     return (
         <div className="flex  min-h-screen">
-            { isLoading && <Spinner />}
+            {isLoading && <Spinner />}
             <div className="w-auto  p-4">
                 <SideNavbar />
             </div>
@@ -61,8 +61,9 @@ const VerifyDoctors = () => {
                         <Select
                             options={statusOptions}
                             onChange={handleSlect}
-                            isSearchable={false} 
-                            isClearable={false} 
+                            value={statusOptions.find(ele => ele.value === formData.isVerified)}
+                            isSearchable={false}
+                            isClearable={false}
                             placeholder="Status"
                             className="ml-2 w-1/4 h-9  focus:outline-none font-semibold text-sm opacity-90"
                         />
@@ -70,7 +71,14 @@ const VerifyDoctors = () => {
                 </div>
                 <div className=" block   ml-auto mr-auto w-[816px]  bg-slate-100 rounded-sm " >
                     {
-                        items.map((ele) => {
+                        items.length === 0 && (
+                            <div className="flex justify-center items-center min-h-64">
+                                <p className="font-semibold text-red-400">No new Doctors to verify !</p>
+                            </div>
+                        )
+                    }
+                    {
+                        items.length > 0 && items.map((ele) => {
                             return <div key={ele._id} className=" border-b border-gray-500 mt-2 mb-2  flex flex-row ">
                                 <div className="p-4 w-60 ">
                                     <div className="h-40 w-40 p-2">
@@ -104,15 +112,15 @@ const VerifyDoctors = () => {
                                     <p className="text-sm font-semibold  mt-3">Consultation Fee : <span className="ml-2 opacity-80"> {ele?.consultationFee}</span> </p>
                                     <div className="flex justify-center items-center mt-10">
                                         {
-                                            !ele?.isVerified && <button 
+                                            !ele?.isVerified && <button
                                                 className="p-2 w-auto text-sm font-semibold bg-green-500 rounded-sm shadow-sm text-white hover:bg-green-600 hover:shadow-lg"
-                                                onClick={ ( ) => hanldleApprove( ele._id ) }
-                                                > Approve </button>
+                                                onClick={() => hanldleApprove(ele._id)}
+                                            > Approve </button>
                                         }
                                         {
-                                            ele?.isVerified && <button 
-                                            className="p-2 w-auto text-sm font-semibold bg-yellow-500 rounded-sm shadow-sm text-white pl-4 pr-4 hover:bg-yellow-600 hover:shadow-lg "
-                                            onClick={ ( ) => hanldleDiscard( ele._id ) }
+                                            ele?.isVerified && <button
+                                                className="p-2 w-auto text-sm font-semibold bg-yellow-500 rounded-sm shadow-sm text-white pl-4 pr-4 hover:bg-yellow-600 hover:shadow-lg "
+                                                onClick={() => hanldleDiscard(ele._id)}
                                             > Discard  </button>
                                         }
                                     </div>
@@ -121,8 +129,15 @@ const VerifyDoctors = () => {
                         })
                     }
                     <div className=" flex justify-end items-end mr-5 p-3">
-                        <Pagination formData= {formData} />
+                        <Pagination formData={formData} />
                     </div>
+                </div>
+                <div >
+                    {
+                        serverError && serverError.map((ele, i) => {
+                            return <li key={i} className="text-sm font-semibold text-red-500 opacity-80"> {ele.msg}</li>
+                        })
+                    }
                 </div>
             </div>
         </div>

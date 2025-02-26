@@ -51,8 +51,8 @@ export const userRegisterSchema = {
         },
         custom: {/*  using this code validating password not conatain repeated word */
             options: (value) => {
-                if (/(\w)\1{1,}/.test(value)) {
-                    throw new Error("Password should not conatin repeted character one next to another")
+                if (/(\w)\1{2,}/.test(value)) {
+                    throw new Error("Password should not have repetitive characters thrice.")
                 }
                 return true;
             }

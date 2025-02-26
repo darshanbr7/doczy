@@ -22,7 +22,7 @@ dotenv.config();
 const app = express();
 const port  = process.env.PORT  
 app.use( express.json() );
-app.use( corn() )
+app.use( cors() )
 
 /* app.use(cors({
   origin: 'https://doczy.vercel.app', // Allow only this origin
@@ -58,9 +58,9 @@ corn.schedule( '0 0 * * *' , ( ) => {
     appointmentReminder();
 })
 // Start the server and listen on the specified port
-/* app.listen ( port, ( ) => {
+app.listen ( port, ( ) => {
     dbConnect(); 
     console.log(`server is running on the port ${ port }`);
-}) */
+})
 
 export default app;

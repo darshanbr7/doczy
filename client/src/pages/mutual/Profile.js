@@ -248,6 +248,7 @@ const Profile = () => {
             <li>Early access to the new features</li>
             <li>Health Reminders</li>
             <li>Access to Records & Reliots</li>
+            <li> User can Update the Profile </li>
             <div className="flex justify-center items-center mt-9">
               <button className="p-2 bg-blue-600 rounded-sm w-32 hover:bg-blue-700">Buy Now</button>
             </div>
